@@ -35,6 +35,7 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 		return listpilotes
 	}
 	json.Unmarshal(body, &data)
+	fmt.Println(data)
 	for _, i := range data.MRData.RaceTable.Races {
 		for _, j := range i.Results {
 			var tempData backend.Pilote
@@ -49,7 +50,7 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 			tempData.Constructor = j.Constructor.Name
 			tempData.ConstructorID = j.Constructor.ConstructorID
 			listpilotes = append(listpilotes, tempData)
-			fmt.Println(tempData.ConstructorID)
+			// fmt.Println(tempData.ConstructorID)
 			// fmt.Println(tempData.Nationality)
 		}
 	}
@@ -85,4 +86,53 @@ func Textify() {
 	}
 
 	fmt.Println("Les ID des pilotes ont été écrits dans le fichier ids.txt")
+}
+
+func Circuits(data backend.InfoCircuits) []backend.Circuit {
+	var listcircuits []backend.Circuit
+	for i := 1950; i <= 2023; i++ {
+		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(i) + ".json"
+
+		req, err := http.NewRequest("GET", apiUrl, nil)
+		if err != nil {
+			fmt.Println("Erreur lors de la création de la requête:", err)
+			return listcircuits
+		}
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Println("Erreur lors de l'envoi de la requête:", err)
+			return listcircuits
+		}
+		defer resp.Body.Close()
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Erreur lors de la lecture de la réponse:", err)
+			return listcircuits
+		}
+		json.Unmarshal(body, &data)
+		for _, j := range data.MRData.RaceTable.Races {
+			var isInList bool
+			var tempData backend.Circuit
+			tempData.IDCircuit = j.Circuit.CircuitID
+			tempData.Name = j.RaceName
+			tempData.Seasons = append(tempData.Seasons, j.Season)
+			for index, l := range listcircuits {
+				if l.IDCircuit == tempData.IDCircuit {
+					isInList = true
+					listcircuits[index].Seasons = append(listcircuits[index].Seasons, j.Season)
+				}
+			}
+			if !isInList {
+				listcircuits = append(listcircuits, tempData)
+				isInList = false
+			}
+		}
+	}
+	for _, m := range listcircuits {
+		fmt.Println(m.Name, m.IDCircuit, m.Seasons, "\n")
+	}
+	return listcircuits
 }
