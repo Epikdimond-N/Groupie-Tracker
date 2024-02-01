@@ -91,12 +91,18 @@ type InfoPilotes struct {
 }
 
 type Pilote struct {
-	DriverID    string
-	Name        string
-	FamilyName  string
-	DateOfBirth string
-	Code        int
-	Number      int
-	Nationality string
-	Constructor string
+	DriverID      string
+	Name          string
+	FamilyName    string
+	DateOfBirth   string
+	Code          int
+	Number        int
+	Nationality   string
+	Constructor   string
+	ConstructorID string
+}
+
+type Circuit struct{
+	IDCircuit string
+	Name string
 }

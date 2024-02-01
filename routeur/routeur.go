@@ -1,14 +1,17 @@
 package routeur
 
 import (
+	controller "f1/controller"
 	"fmt"
 	"net/http"
 	"os"
-	controller "f1/controller"
 )
 
 func InitServe() {
-	http.HandleFunc("/", controller.DisplayHome)
+	http.HandleFunc("/pilotes", controller.DisplayPilotes)
+	http.HandleFunc("/constructeurs", controller.DisplayConstructeurs)
+	http.HandleFunc("/circuits", controller.DisplayCircuits)
+	http.HandleFunc("/login", controller.DisplayLogin)
 
 	rootDoc, _ := os.Getwd()
 	fileserver := http.FileServer(http.Dir(rootDoc + "/assets"))

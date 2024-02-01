@@ -1,0 +1,89 @@
+{{define "pilotes"}}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/header.css" />
+    <link rel="stylesheet" href="/static/css/body.css" />
+    <title>Pilotes</title>
+  </head>
+  <body>
+    <div class="contentall">
+      <header>
+        <div class="logo">
+          <img src="/static/img/logo/logo.png" alt="Logo F1" />
+        </div>
+
+        <div class="navbar">
+          <a href="/pilotes">
+            <div class="current">
+              <p>PILOTES</p>
+            </div>
+          </a>
+          <a href="/constructeurs">
+            <div>
+              <p>CONSTRUCTEURS</p>
+            </div>
+          </a>
+          <a href="/circuits">
+            <div>
+              <p>CIRCUITS</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="search-container">
+          <div class="search">
+            <img src="/static/img/loupe.png" alt="Image Recherche" />
+            <input type="text" placeholder="Recherche" />
+          </div>
+        </div>
+        <a class="link-login" href="/login">
+          <div class="login">
+            <div class="imglogin"></div>
+            <p>LOGIN</p>
+          </div>
+        </a>
+      </header>
+      <section class="page-pilotes">
+        {{range .}}
+        <div class="carte-pilote {{.ConstructorID}}">
+          <img
+            class="profil-pilote"
+            src="/static/img/pilotes-png/{{.DriverID}}.png"
+            alt="Image {{.Name}} {{.FamilyName}}"
+          />
+          <div class="infos-pilote">
+            <p>{{.Name}} {{.FamilyName}}</p>
+            <!-- Drapeau {{.Nationality}} -->
+            <img src="/static/img/drapeaux/angleterre.jpg" alt="" />
+          </div>
+          <div class="constructor">
+            <p>#{{.Number}}</p>
+            <img
+              src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
+              alt="Image {{.Constructor}}"
+            />
+          </div>
+        </div>
+        {{end}}
+      </section>
+    </div>
+  </body>
+</html>
+
+{{end}}
+<!-- {{.Constructeur}} -->
+<!-- <img
+            src="/static/img/pilotes-png/{{.DriverID}}.png"
+            alt="Image {{.Name}} {{.FamilyName}}"
+          />
+          <div class="nom-pays">
+            <p>{{.Name}} {{.FamilyName}}</p>
+            <img
+              src="/static/drapeaux/angleterre.jpg"
+              alt="{{.Nationality}} flag"
+            />
+          </div> -->

@@ -1,0 +1,143 @@
+@font-face {
+  font-family: "F1";
+  src: url("/static/font/Formula1-Regular-1.ttf") format("truetype");
+}
+
+* {
+  font-family: "F1";
+  padding: 0;
+  margin: 0;
+  --dark: #14141d;
+  --light: #333348;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
+.contentall {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  height: 15%;
+  width: 100%;
+  background-color: var(--dark);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  height: 90%;
+}
+
+.logo img {
+  height: 100%;
+}
+
+.navbar {
+  width: 40%;
+  height: 90%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.navbar a {
+  text-decoration: none;
+  height: 100%;
+  width: 25%;
+  display: flex;
+  align-items: center;
+}
+
+.navbar div {
+  height: 80%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current {
+  background-color: var(--light);
+}
+
+.navbar div:hover,
+.login:hover {
+  background-color: #7c7c9d;
+}
+
+.navbar div p {
+  color: #fff;
+}
+
+.search-container {
+  height: 90%;
+  width: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search {
+  height: 30%;
+  width: 80%;
+  background-color: var(--light);
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.search img {
+  height: 60%;
+}
+
+.search input {
+  width: 70%;
+  border: none;
+  outline: none;
+  background: none;
+  color: #fff;
+}
+
+.search input::placeholder {
+  color: #fff;
+}
+
+.link-login {
+  height: 80%;
+  width: 10%;
+  text-decoration: none;
+}
+.login {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.imglogin {
+  width: 40%;
+  height: 40%;
+  background-image: url("/static/img/login-icon2.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.login p {
+  color: #fff;
+}

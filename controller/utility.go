@@ -47,10 +47,20 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 			tempData.Number, _ = strconv.Atoi(j.Driver.PermanentNumber)
 			tempData.Nationality = j.Driver.Nationality
 			tempData.Constructor = j.Constructor.Name
+			tempData.ConstructorID = j.Constructor.ConstructorID
 			listpilotes = append(listpilotes, tempData)
+			fmt.Println(tempData.ConstructorID)
+			// fmt.Println(tempData.Nationality)
 		}
 	}
+
 	return listpilotes
+}
+
+func Drapeaux(nationality string) string {
+	// if nationality ==
+	// return ""
+	return ""
 }
 
 func Textify() {

@@ -1,0 +1,65 @@
+{{define "circuits"}}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/static/css/header.css" />
+    <link rel="stylesheet" href="/static/css/body.css" />
+
+    <title>Circuits</title>
+  </head>
+  <body>
+    <div class="contentall">
+      <header>
+        <div class="logo">
+          <img src="/static/img/logo/logo.png" alt="Logo F1" />
+        </div>
+
+        <div class="navbar">
+          <a href="/pilotes">
+            <div>
+              <p>PILOTES</p>
+            </div>
+          </a>
+          <a href="/constructeurs">
+            <div>
+              <p>CONSTRUCTEURS</p>
+            </div>
+          </a>
+          <a href="/circuits">
+            <div class="current">
+              <p>CIRCUITS</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="search-container">
+          <div class="search">
+            <img src="/static/img/loupe.png" alt="Image Recherche" />
+            <input type="text" placeholder="Recherche" />
+          </div>
+        </div>
+        <a class="link-login" href="/login">
+          <div class="login">
+            <div class="imglogin"></div>
+            <p>LOGIN</p>
+          </div>
+        </a>
+      </header>
+      <section class="page-circuits">
+        {{range .}}
+        <div class="carte-circuit">
+          <img
+            src="/static/img/circuits/{{.IDCircuit}}"
+            alt="Image {{.Name}}"
+            class="photo-circuit"
+          />
+        </div>
+        {{end}}
+      </section>
+    </div>
+  </body>
+</html>
+{{end}}
