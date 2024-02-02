@@ -174,6 +174,7 @@ type Pilote struct {
 	Code          int
 	Number        int
 	Nationality   string
+	Flag          string
 	Constructor   string
 	ConstructorID string
 }
@@ -181,5 +182,7 @@ type Pilote struct {
 type Circuit struct {
 	IDCircuit string
 	Name      string
+	Pays      string
+	Ville     string
 	Seasons   []string
 }

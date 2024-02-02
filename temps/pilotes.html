@@ -58,7 +58,10 @@
           <div class="infos-pilote">
             <p>{{.Name}} {{.FamilyName}}</p>
             <!-- Drapeau {{.Nationality}} -->
-            <img src="/static/img/drapeaux/angleterre.jpg" alt="" />
+            <img
+              src="/static/img/drapeaux/{{.Flag}}.png"
+              alt="{{.Flag}} flag"
+            />
           </div>
           <div class="constructor">
             <p>#{{.Number}}</p>

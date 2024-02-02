@@ -35,7 +35,6 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 		return listpilotes
 	}
 	json.Unmarshal(body, &data)
-	fmt.Println(data)
 	for _, i := range data.MRData.RaceTable.Races {
 		for _, j := range i.Results {
 			var tempData backend.Pilote
@@ -47,6 +46,7 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 			tempData.Code, _ = strconv.Atoi(j.Driver.Code)
 			tempData.Number, _ = strconv.Atoi(j.Driver.PermanentNumber)
 			tempData.Nationality = j.Driver.Nationality
+			tempData.Flag = Drapeaux(j.Driver.Nationality)
 			tempData.Constructor = j.Constructor.Name
 			tempData.ConstructorID = j.Constructor.ConstructorID
 			listpilotes = append(listpilotes, tempData)
@@ -54,14 +54,47 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 			// fmt.Println(tempData.Nationality)
 		}
 	}
-
+	for _, m := range listpilotes {
+		fmt.Println(m.Name, m.FamilyName, m.Nationality, m.Flag)
+	}
 	return listpilotes
 }
 
 func Drapeaux(nationality string) string {
-	// if nationality ==
-	// return ""
-	return ""
+	var flag string
+	switch nationality {
+	case "Dutch":
+		flag = "Netherland"
+	case "Monegasque":
+		flag = "Monaco"
+	case "British":
+		flag = "UK"
+	case "Mexican":
+		flag = "Mexico"
+	case "Australian":
+		flag = "Australia"
+	case "Spanish":
+		flag = "Spain"
+	case "Japanese":
+		flag = "Japan"
+	case "Canadian":
+		flag = "Canada"
+	case "French":
+		flag = "France"
+	case "Thai":
+		flag = "Thailand"
+	case "German":
+		flag = "Germany"
+	case "American":
+		flag = "USA"
+	case "Chinese":
+		flag = "China"
+	case "Finnish":
+		flag = "Finland"
+	case "Danish":
+		flag = "Denmark"
+	}
+	return flag
 }
 
 func Textify() {
@@ -69,7 +102,7 @@ func Textify() {
 	listpilotes := Pilotes(data)
 
 	// Ouvrir le fichier en écriture
-	file, err := os.Create("ids.txt")
+	file, err := os.Create("pays.txt")
 	if err != nil {
 		fmt.Println("Erreur lors de la création du fichier:", err)
 		return
@@ -78,7 +111,7 @@ func Textify() {
 
 	// Parcourir la liste de pilotes et écrire les ID dans le fichier
 	for _, pilote := range listpilotes {
-		_, err := file.WriteString(pilote.DriverID + "\n")
+		_, err := file.WriteString(pilote.Nationality + "\n")
 		if err != nil {
 			fmt.Println("Erreur lors de l'écriture dans le fichier:", err)
 			return
@@ -118,6 +151,8 @@ func Circuits(data backend.InfoCircuits) []backend.Circuit {
 			var tempData backend.Circuit
 			tempData.IDCircuit = j.Circuit.CircuitID
 			tempData.Name = j.RaceName
+			tempData.Pays = j.Circuit.Location.Country
+			tempData.Ville = j.Circuit.Location.Locality
 			tempData.Seasons = append(tempData.Seasons, j.Season)
 			for index, l := range listcircuits {
 				if l.IDCircuit == tempData.IDCircuit {
@@ -130,9 +165,6 @@ func Circuits(data backend.InfoCircuits) []backend.Circuit {
 				isInList = false
 			}
 		}
-	}
-	for _, m := range listcircuits {
-		fmt.Println(m.Name, m.IDCircuit, m.Seasons, "\n")
 	}
 	return listcircuits
 }

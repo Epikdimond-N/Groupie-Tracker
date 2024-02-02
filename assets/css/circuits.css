@@ -1,0 +1,16 @@
+section {
+  height: 85vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow: scroll;
+}
+
+.page-circuits {
+  background-image: url("/static/img/bg/background-circuit-shadow.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}

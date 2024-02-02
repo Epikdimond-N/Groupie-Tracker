@@ -24,12 +24,7 @@ section {
   background-size: cover;
 }
 
-.page-circuits {
-  background-image: url("/static/img/bg/background-circuit-shadow.jpg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-}
+
 
 .page-login {
   background-image: url("/static/img/bg/background-login-shadow.jpg");
