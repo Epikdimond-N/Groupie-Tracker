@@ -167,6 +167,7 @@ type InfoCircuits struct {
 }
 
 type Pilote struct {
+	PageId        int
 	DriverID      string
 	Name          string
 	FamilyName    string
@@ -181,6 +182,7 @@ type Pilote struct {
 
 type Circuit struct {
 	IDCircuit string
+	GPName    string
 	Name      string
 	Pays      string
 	Ville     string

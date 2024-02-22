@@ -11,52 +11,73 @@ import (
 )
 
 func Pilotes(data backend.InfoPilotes) []backend.Pilote {
-	apiUrl := "http://ergast.com/api/f1/2023/last/results.json"
 
 	var listpilotes []backend.Pilote
+	var PageId = 1
+	var PageIdUsed int
 
-	req, err := http.NewRequest("GET", apiUrl, nil)
-	if err != nil {
-		fmt.Println("Erreur lors de la création de la requête:", err)
-		return listpilotes
-	}
+	for i := 2023; i >= 2011; i-- {
+		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(i) + "/last/results.json"
+		req, err := http.NewRequest("GET", apiUrl, nil)
+		if err != nil {
+			fmt.Println("Erreur lors de la création de la requête:", err)
+			return listpilotes
+		}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("Erreur lors de l'envoi de la requête:", err)
-		return listpilotes
-	}
-	defer resp.Body.Close()
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Println("Erreur lors de l'envoi de la requête:", err)
+			return listpilotes
+		}
+		defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Erreur lors de la lecture de la réponse:", err)
-		return listpilotes
-	}
-	json.Unmarshal(body, &data)
-	for _, i := range data.MRData.RaceTable.Races {
-		for _, j := range i.Results {
-			var tempData backend.Pilote
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Erreur lors de la lecture de la réponse:", err)
+			return listpilotes
+		}
 
-			tempData.DriverID = j.Driver.DriverID
-			tempData.Name = j.Driver.GivenName
-			tempData.FamilyName = j.Driver.FamilyName
-			tempData.DateOfBirth = j.Driver.DateOfBirth
-			tempData.Code, _ = strconv.Atoi(j.Driver.Code)
-			tempData.Number, _ = strconv.Atoi(j.Driver.PermanentNumber)
-			tempData.Nationality = j.Driver.Nationality
-			tempData.Flag = Drapeaux(j.Driver.Nationality)
-			tempData.Constructor = j.Constructor.Name
-			tempData.ConstructorID = j.Constructor.ConstructorID
-			listpilotes = append(listpilotes, tempData)
-			// fmt.Println(tempData.ConstructorID)
-			// fmt.Println(tempData.Nationality)
+		json.Unmarshal(body, &data)
+
+		for _, i := range data.MRData.RaceTable.Races {
+			for _, j := range i.Results {
+				var alreadyFoud bool
+				for _, k := range listpilotes {
+					if k.DriverID == j.Driver.DriverID {
+						alreadyFoud = true
+						break
+					}
+				}
+				if !alreadyFoud {
+					var tempData backend.Pilote
+
+					tempData.PageId = PageId
+					PageIdUsed++
+					if PageIdUsed >= 10 {
+						PageId++
+						PageIdUsed = 0
+					}
+					tempData.DriverID = j.Driver.DriverID
+					tempData.Name = j.Driver.GivenName
+					tempData.FamilyName = j.Driver.FamilyName
+					tempData.DateOfBirth = j.Driver.DateOfBirth
+					tempData.Code, _ = strconv.Atoi(j.Driver.Code)
+					tempData.Number, _ = strconv.Atoi(j.Driver.PermanentNumber)
+					tempData.Nationality = j.Driver.Nationality
+					tempData.Flag = Drapeaux(j.Driver.Nationality)
+					tempData.Constructor = j.Constructor.Name
+					tempData.ConstructorID = j.Constructor.ConstructorID
+					listpilotes = append(listpilotes, tempData)
+					// fmt.Println(tempData.DriverID, tempData.Nationality)
+				}
+			}
 		}
 	}
-	for _, m := range listpilotes {
-		fmt.Println(m.Name, m.FamilyName, m.Nationality, m.Flag)
-	}
+
+	// for _, m := range listpilotes {
+	// 	fmt.Println(m.PageId, m.Name, m.FamilyName, m.Nationality, m.Flag)
+	// }
 	return listpilotes
 }
 
@@ -93,6 +114,28 @@ func Drapeaux(nationality string) string {
 		flag = "Finland"
 	case "Danish":
 		flag = "Denmark"
+	case "Brazilian":
+		flag = "Brazil"
+	case "Polish":
+		flag = "Poland"
+	case "Venezuelan":
+		flag = "Venezuela"
+	case "Indian":
+		flag = "India"
+	case "Italian":
+		flag = "Italy"
+	case "Belgian":
+		flag = "Belgium"
+	case "Russian":
+		flag = "Russia"
+	case "Swedish":
+		flag = "Sweden"
+	case "Venezuelian":
+		flag = "Venezuela"
+	case "Swiss":
+		flag = "Switzerland"
+	case "New Zealander":
+		flag = "New_Zealand"
 	}
 	return flag
 }
@@ -150,7 +193,8 @@ func Circuits(data backend.InfoCircuits) []backend.Circuit {
 			var isInList bool
 			var tempData backend.Circuit
 			tempData.IDCircuit = j.Circuit.CircuitID
-			tempData.Name = j.RaceName
+			tempData.GPName = j.RaceName
+			tempData.Name = j.Circuit.CircuitName
 			tempData.Pays = j.Circuit.Location.Country
 			tempData.Ville = j.Circuit.Location.Locality
 			tempData.Seasons = append(tempData.Seasons, j.Season)
