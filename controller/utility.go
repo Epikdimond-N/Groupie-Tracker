@@ -10,11 +10,9 @@ import (
 	"strconv"
 )
 
-func Pilotes(data backend.InfoPilotes) []backend.Pilote {
-
+func Pilotes() []backend.Pilote {
+	var data backend.InfoPilotes
 	var listpilotes []backend.Pilote
-	var PageId = 1
-	var PageIdUsed int
 
 	for i := 2023; i >= 2011; i-- {
 		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(i) + "/last/results.json"
@@ -51,13 +49,6 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 				}
 				if !alreadyFoud {
 					var tempData backend.Pilote
-
-					tempData.PageId = PageId
-					PageIdUsed++
-					if PageIdUsed >= 10 {
-						PageId++
-						PageIdUsed = 0
-					}
 					tempData.DriverID = j.Driver.DriverID
 					tempData.Name = j.Driver.GivenName
 					tempData.FamilyName = j.Driver.FamilyName
@@ -73,6 +64,7 @@ func Pilotes(data backend.InfoPilotes) []backend.Pilote {
 				}
 			}
 		}
+		listpilotes = Pagination(listpilotes)
 	}
 
 	// for _, m := range listpilotes {
@@ -141,8 +133,7 @@ func Drapeaux(nationality string) string {
 }
 
 func Textify() {
-	var data backend.InfoPilotes
-	listpilotes := Pilotes(data)
+	listpilotes := Pilotes()
 
 	// Ouvrir le fichier en écriture
 	file, err := os.Create("pays.txt")
@@ -211,4 +202,20 @@ func Circuits(data backend.InfoCircuits) []backend.Circuit {
 		}
 	}
 	return listcircuits
+}
+
+func Pagination(data []backend.Pilote) []backend.Pilote {
+	var listpilotes []backend.Pilote
+	var id = 1
+	var attributedId int
+	for _, i := range data {
+		i.PageId = id
+		listpilotes = append(listpilotes, i)
+		attributedId++
+		if attributedId == 10 {
+			id++
+			attributedId = 0
+		}
+	}
+	return listpilotes
 }

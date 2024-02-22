@@ -188,3 +188,4 @@ type Circuit struct {
 	Ville     string
 	Seasons   []string
 }
+
