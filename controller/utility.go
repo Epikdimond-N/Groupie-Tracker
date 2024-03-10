@@ -8,14 +8,15 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func Pilotes() []backend.Pilote {
 	var data backend.InfoPilotes
 	var listpilotes []backend.Pilote
 
-	for i := 2023; i >= 2011; i-- {
-		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(i) + "/last/results.json"
+	for saison := 2023; saison >= 2011; saison-- {
+		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(saison) + "/last/results.json"
 		req, err := http.NewRequest("GET", apiUrl, nil)
 		if err != nil {
 			fmt.Println("Erreur lors de la création de la requête:", err)
@@ -44,6 +45,11 @@ func Pilotes() []backend.Pilote {
 				for _, k := range listpilotes {
 					if k.DriverID == j.Driver.DriverID {
 						alreadyFoud = true
+						for index, l := range listpilotes {
+							if l.DriverID == j.Driver.DriverID {
+								listpilotes[index].Saison = append(listpilotes[index].Saison, saison)
+							}
+						}
 						break
 					}
 				}
@@ -59,14 +65,13 @@ func Pilotes() []backend.Pilote {
 					tempData.Flag = Drapeaux(j.Driver.Nationality)
 					tempData.Constructor = j.Constructor.Name
 					tempData.ConstructorID = j.Constructor.ConstructorID
+					tempData.Saison = append(tempData.Saison, saison)
 					listpilotes = append(listpilotes, tempData)
-					// fmt.Println(tempData.DriverID, tempData.Nationality)
 				}
 			}
 		}
-		listpilotes = Pagination(listpilotes)
 	}
-
+	listpilotes = Pagination(listpilotes)
 	// for _, m := range listpilotes {
 	// 	fmt.Println(m.PageId, m.Name, m.FamilyName, m.Nationality, m.Flag)
 	// }
@@ -110,8 +115,6 @@ func Drapeaux(nationality string) string {
 		flag = "Brazil"
 	case "Polish":
 		flag = "Poland"
-	case "Venezuelan":
-		flag = "Venezuela"
 	case "Indian":
 		flag = "India"
 	case "Italian":
@@ -122,7 +125,7 @@ func Drapeaux(nationality string) string {
 		flag = "Russia"
 	case "Swedish":
 		flag = "Sweden"
-	case "Venezuelian":
+	case "Venezuelan":
 		flag = "Venezuela"
 	case "Swiss":
 		flag = "Switzerland"
@@ -136,7 +139,7 @@ func Textify() {
 	listpilotes := Pilotes()
 
 	// Ouvrir le fichier en écriture
-	file, err := os.Create("pays.txt")
+	file, err := os.Create("nationality.txt")
 	if err != nil {
 		fmt.Println("Erreur lors de la création du fichier:", err)
 		return
@@ -152,7 +155,7 @@ func Textify() {
 		}
 	}
 
-	fmt.Println("Les ID des pilotes ont été écrits dans le fichier ids.txt")
+	fmt.Println("Les ID des pilotes ont été écrits dans le fichier nationality.txt")
 }
 
 func Circuits(data backend.InfoCircuits) []backend.Circuit {
@@ -217,5 +220,30 @@ func Pagination(data []backend.Pilote) []backend.Pilote {
 			attributedId = 0
 		}
 	}
+
+	var maxpage int
+	if len(listpilotes)%10 != 0 {
+		maxpage = (len(listpilotes) / 10) + 1
+		for index, _ := range listpilotes {
+			listpilotes[index].MaxPage = maxpage
+		}
+	} else {
+		maxpage = (len(listpilotes) / 10)
+		for index, _ := range listpilotes {
+			listpilotes[index].MaxPage = maxpage
+		}
+	}
 	return listpilotes
+}
+
+func SearchPilote(nompilote string) []backend.Pilote {
+	var found []backend.Pilote
+	nompilote = strings.ToUpper(nompilote)
+	for _, i := range pilotes {
+		if strings.ToUpper(i.FamilyName) == nompilote || strings.ToUpper(i.Name) == nompilote || strings.ToUpper(i.Name)+" "+strings.ToUpper(i.FamilyName) == nompilote {
+			found = append(found, i)
+			break
+		}
+	}
+	return found
 }

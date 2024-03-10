@@ -7,32 +7,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/pilotes.css" />
     <link rel="icon" href="/static/img/logo/logo-transparent.png" />
-
     <title>Pilotes</title>
   </head>
   <body>
     <div class="content-all">
       <header>
         <div class="upper-head">
-          <a href="/favoris">
-            <div class="content-favoris">
-              <img
-                src="/static/img/logo/logo-favoris.png"
-                alt="Image Favoris"
-                0
-              />
-              <p>Favoris</p>
-            </div>
-          </a>
-          <a href="/accueil">
-            <img class="logo" src="/static/img/logo/logo.png" alt="Logo F1" />
-          </a>
-          <a href="/login">
-            <div class="content-login">
-              <img src="/static/img/logo/login-icon3.png" alt="Image Login" />
-              <p>Login</p>
-            </div>
-          </a>
+          <div class="favoris-container">
+            <a href="/favoris">
+              <div class="content-favoris">
+                <img
+                  src="/static/img/logo/logo-favoris.png"
+                  alt="Image Favoris"
+                  0
+                />
+                <p>Favoris</p>
+              </div>
+            </a>
+          </div>
+          <div class="logo-container">
+            <a href="/accueil">
+              <img class="logo" src="/static/img/logo/logo.png" alt="Logo F1" />
+            </a>
+          </div>
+          <div class="search-log-container">
+            <form action="/pilotes/search">
+              <input type="text" placeholder="Rechercher un pilote" />
+              <button type="submit"></button>
+            </form>
+            <a href="/login">
+              <div class="content-login">
+                <img src="/static/img/logo/login-icon3.png" alt="Image Login" />
+                <p>Login</p>
+              </div>
+            </a>
+          </div>
         </div>
         <div class="lower-head">
           <a class="current" href="/pilotes">
@@ -47,35 +56,530 @@
         </div>
       </header>
       <section>
-        <form action="/filtres/pilotes" method="post">
-          <input type="checkbox" name="const" id="const01" value="red_bull" />
-          <label id="const01">Red Bull</label>
-          <input type="checkbox" name="const" id="const02" value="mercedes" />
-          <label id="const02">Mercedes AMG Petronas</label>
-          <input type="checkbox" name="const" id="const03" value="ferrari" />
-          <label id="const03">Ferrari</label>
-          <input type="checkbox" name="const" id="const04" value="mclaren" />
-          <label id="const04">McLaren</label>
-          <input type="checkbox" name="const" id="const05" value="alpine" />
-          <label id="const05">Alpine</label><br />
-          <input type="checkbox" name="const" id="const06" value="haas" />
-          <label id="const06">Haas</label>
-          <input
-            type="checkbox"
-            name="const"
-            id="const07"
-            value="aston_martin"
-          />
-          <label id="const07">Aston Martin</label>
-          <input type="checkbox" name="const" id="const08" value="alphatauri" />
-          <label id="const08">Alpha Tauri</label>
-          <input type="checkbox" name="const" id="const09" value="williams" />
-          <label id="const09">Williams Racing</label>
-          <input type="checkbox" name="const" id="const10" value="alfa" />
-          <label id="const10">Alfa Romeo</label>
-          <br />
-          <button type="submit">            CONFIRMER LA SELECTION            </button>
-        </form>
+        <div class="ctn-filtres-search-page">
+          <button onclick="DisplayFiltres()" id="button-filtres">
+            FILTRES
+          </button>
+          <form action="/search/pilotes" method="post">
+            <input
+              name="search"
+              type="text"
+              placeholder="Rechercher un pilote"
+            />
+            <button type="submit"></button>
+          </form>
+
+          <p class="num-page">
+            PAGE {{range .}}{{.PageId}} / {{.MaxPage}}{{break}} {{end}}
+          </p>
+        </div>
+        <div class="filtres" id="filtres">
+          <form class="form-filtres" action="/filtres/pilotes" method="post">
+            <div class="filtres-container">
+              <div class="filtres-constructeurs">
+                <label class="label-const" id="red_bull">
+                  <input type="checkbox" value="red_bull" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/red_bull.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/red_bull.png"
+                  />
+                </label>
+                <label class="label-const" id="ferrari">
+                  <input type="checkbox" value="mercedes" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/mercedes.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/mercedes.png"
+                  />
+                </label>
+                <label class="label-const" id="mercedes">
+                  <input type="checkbox" value="ferrari" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/ferrari.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/ferrari.png"
+                  />
+                </label>
+                <label class="label-const" id="mclaren">
+                  <input type="checkbox" value="mclaren" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/mclaren.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/mclaren.png"
+                  />
+                </label>
+                <label class="label-const" id="aston_martin">
+                  <input type="checkbox" value="aston_martin" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/aston_martin.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/aston_martin.png"
+                  />
+                </label>
+                <label class="label-const" id="alphatauri">
+                  <input type="checkbox" value="alphatauri" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/alphatauri.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/alphatauri.png"
+                  />
+                </label>
+                <label class="label-const" id="alpine">
+                  <input type="checkbox" value="alpine" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/alpine.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/alpine.png"
+                  />
+                </label>
+                <label class="label-const" id="williams">
+                  <input type="checkbox" value="williams" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/williams.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/williams.png"
+                  />
+                </label>
+                <label class="label-const" id="alfa">
+                  <input type="checkbox" value="alfa" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/alfa.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/alfa.png"
+                  />
+                </label>
+                <label class="label-const" id="haas">
+                  <input type="checkbox" value="haas" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/haas.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/haas.png"
+                  />
+                </label>
+                <label class="label-const" id="toro_rosso">
+                  <input type="checkbox" value="toro_rosso" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/toro_rosso.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/toro_rosso.png"
+                  />
+                </label>
+                <label class="label-const" id="sauber">
+                  <input type="checkbox" value="sauber" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/sauber.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/sauber.png"
+                  />
+                </label>
+                <label class="label-const" id="renault">
+                  <input type="checkbox" value="renault" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/renault.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/renault.png"
+                  />
+                </label>
+                <label class="label-const" id="manor">
+                  <input type="checkbox" value="manor" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/manor.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/manor.png"
+                  />
+                </label>
+                <label class="label-const" id="lotus_f1">
+                  <input type="checkbox" value="lotus_f1" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/lotus_f1.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/lotus_f1.png"
+                  />
+                </label>
+                <label class="label-const" id="caterham">
+                  <input type="checkbox" value="caterham" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/caterham.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/caterham.png"
+                  />
+                </label>
+                <label class="label-const" id="force_india">
+                  <input type="checkbox" value="force_india" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/force_india.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/force_india.png"
+                  />
+                </label>
+                <label class="label-const" id="marussia">
+                  <input type="checkbox" value="marussia" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/marussia.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/marussia.png"
+                  />
+                </label>
+                <label class="label-const" id="hrt">
+                  <input type="checkbox" value="hrt" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/hrt.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/hrt.png"
+                  />
+                </label>
+                <label class="label-const" id="lotus_racing">
+                  <input type="checkbox" value="lotus_racing" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/lotus_racing.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/lotus_racing.png"
+                  />
+                </label>
+                <label class="label-const" id="virgin">
+                  <input type="checkbox" value="virgin" name="const" />
+                  <img
+                    class="img-unchecked"
+                    src="/static/img/constructeurs-png/virgin.png"
+                  />
+                  <img
+                    class="img-checked"
+                    src="/static/img/constructeurs-png/virgin.png"
+                  />
+                </label>
+              </div>
+              <div class="filtres-nationalites">
+                <label class="label-flag">
+                  <input type="checkbox" value="Dutch" name="flag" />
+                  <p class="img-unchecked">Netherland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Netherland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Monegasque" name="flag" />
+                  <p class="img-unchecked">Monaco</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Monaco.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="British" name="flag" />
+                  <p class="img-unchecked">UK</p>
+                  <img class="img-checked" src="/static/img/drapeaux/UK.png" />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Mexican" name="flag" />
+                  <p class="img-unchecked">Mexico</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Mexico.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Australian" name="flag" />
+                  <p class="img-unchecked">Australia</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Australia.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Spanish" name="flag" />
+                  <p class="img-unchecked">Spain</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Spain.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Japanese" name="flag" />
+                  <p class="img-unchecked">Japan</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Japan.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Canadian" name="flag" />
+                  <p class="img-unchecked">Canada</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Canada.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="French" name="flag" />
+                  <p class="img-unchecked">France</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/France.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Thai" name="flag" />
+                  <p class="img-unchecked">Thailand</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Thailand.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="German" name="flag" />
+                  <p class="img-unchecked">Germany</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Germany.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="American" name="flag" />
+                  <p class="img-unchecked">USA</p>
+                  <img class="img-checked" src="/static/img/drapeaux/USA.png" />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Chinese" name="flag" />
+                  <p class="img-unchecked">China</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/China.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Finnish" name="flag" />
+                  <p class="img-unchecked">Finland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Finland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Danish" name="flag" />
+                  <p class="img-unchecked">Denmark</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Denmark.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Brazillian" name="flag" />
+                  <p class="img-unchecked">Brazil</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Brazil.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Polish" name="flag" />
+                  <p class="img-unchecked">Poland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Poland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Venezuelan" name="flag" />
+                  <p class="img-unchecked">Venezuela</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Venezuela.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Indian" name="flag" />
+                  <p class="img-unchecked">India</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/India.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Italian" name="flag" />
+                  <p class="img-unchecked">Italy</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Italy.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Belgian" name="flag" />
+                  <p class="img-unchecked">Belgium</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Belgium.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Russian" name="flag" />
+                  <p class="img-unchecked">Russia</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Russia.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Swedish" name="flag" />
+                  <p class="img-unchecked">Sweden</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Sweden.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Swiss" name="flag" />
+                  <p class="img-unchecked">Switzerland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Switzerland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="New Zealander" name="flag" />
+                  <p class="img-unchecked">New Zealand</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/New_Zealand.png"
+                  />
+                </label>
+              </div>
+              <div class="filtres-saisons">
+                <label class="label-saison">
+                  <input type="checkbox" value="2011" name="saison" />
+                  <p class="img-unchecked">2011</p>
+                  <img class="img-checked" src="/static/img/saison/2011.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2012" name="saison" />
+                  <p class="img-unchecked">2012</p>
+                  <img class="img-checked" src="/static/img/saison/2012.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2013" name="saison" />
+                  <p class="img-unchecked">2013</p>
+                  <img class="img-checked" src="/static/img/saison/2013.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2014" name="saison" />
+                  <p class="img-unchecked">2014</p>
+                  <img class="img-checked" src="/static/img/saison/2014.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2015" name="saison" />
+                  <p class="img-unchecked">2015</p>
+                  <img class="img-checked" src="/static/img/saison/2015.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2016" name="saison" />
+                  <p class="img-unchecked">2016</p>
+                  <img class="img-checked" src="/static/img/saison/2016.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2017" name="saison" />
+                  <p class="img-unchecked">2017</p>
+                  <img class="img-checked" src="/static/img/saison/2017.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2018" name="saison" />
+                  <p class="img-unchecked">2018</p>
+                  <img class="img-checked" src="/static/img/saison/2018.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2019" name="saison" />
+                  <p class="img-unchecked">2019</p>
+                  <img class="img-checked" src="/static/img/saison/2019.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2020" name="saison" />
+                  <p class="img-unchecked">2020</p>
+                  <img class="img-checked" src="/static/img/saison/2020.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2021" name="saison" />
+                  <p class="img-unchecked">2021</p>
+                  <img class="img-checked" src="/static/img/saison/2021.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2022" name="saison" />
+                  <p class="img-unchecked">2022</p>
+                  <img class="img-checked" src="/static/img/saison/2022.jpg" />
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2023" name="saison" />
+                  <p class="img-unchecked">2023</p>
+                  <img class="img-checked" src="/static/img/saison/2023.jpg" />
+                </label>
+              </div>
+            </div>
+            <div class="confirm-filtres">
+              <button type="submit" id="filtres" onclick="DisplayPasFiltres()">
+                CONFIRM
+              </button>
+            </div>
+          </form>
+        </div>
         <div class="liste-pilotes">
           {{range .}}
           <div class="card">
@@ -101,32 +605,22 @@
                   src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
                   alt="Image {{.Constructor}}"
                 />
+                <form class="favoris" action="/add/pilote_to_favoris">
+                  <button type="submit"></button>
+                </form>
               </div>
             </div>
           </div>
-
-          <!-- <img
-            class="profil-pilote"
-            src="/static/img/pilotes-png/{{.DriverID}}.png"
-            alt="Image {{.Name}} {{.FamilyName}}"
-          />
-          <p>{{.Name}} {{.FamilyName}}</p>
-          <img src="/static/img/drapeaux/{{.Flag}}.png" alt="{{.Flag}} flag" />
-          <p>#{{.Number}}</p>
-          <img
-            src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
-            alt="Image {{.Constructor}}"
-          /> -->
           {{end}}
         </div>
         <div class="pagination">
-          {{range .}} {{if eq .PageId 1}}
+          {{range .}} {{if eq .MaxPage 1}} {{break}} {{else if eq .PageId 1}}
           <a href="/next">
             <div class="next">
               <p>NEXT</p>
             </div></a
           >
-          {{break}} {{else if eq .PageId 7}}
+          {{break}} {{else if eq .PageId .MaxPage}}
           <a href="/previous">
             <div class="previous">
               <p>PREVIOUS</p>
@@ -148,5 +642,19 @@
       </section>
     </div>
   </body>
+  <script>
+    function DisplayFiltres() {
+      const stockFiltres = document.getElementById("filtres");
+      stockFiltres.style.visibility = "visible";
+      const stockButtonFiltres = document.getElementById("button-filtres");
+      stockButtonFiltres.style.visibility = "hidden";
+    }
+    function DisplayPasFiltres() {
+      const stockFiltres = document.getElementById("filtres");
+      stockFiltres.style.visibility = "hidden";
+      const stockButtonFiltres = document.getElementById("button-filtres");
+      stockButtonFiltres.style.visibility = "visible";
+    }
+  </script>
 </html>
 {{end}}

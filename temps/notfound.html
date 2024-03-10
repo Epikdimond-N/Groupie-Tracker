@@ -1,0 +1,57 @@
+{{define "notfound"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/notfound.css" />
+    <link rel="icon" href="/static/img/logo/logo-transparent.png" />
+    <title>Not Found</title>
+  </head>
+  <body>
+    <div class="content-all">
+      <header>
+        <div class="upper-head">
+          <a href="/favoris">
+            <div class="content-favoris">
+              <img
+                src="/static/img/logo/logo-favoris.png"
+                alt="Image Favoris"
+                0
+              />
+              <p>Favoris</p>
+            </div>
+          </a>
+          <a href="/accueil">
+            <img class="logo" src="/static/img/logo/logo.png" alt="Logo F1" />
+          </a>
+          <a href="/login">
+            <div class="content-login">
+              <img src="/static/img/logo/login-icon3.png" alt="Image Login" />
+              <p>Login</p>
+            </div>
+          </a>
+        </div>
+        <div class="lower-head">
+          <a class="current" href="/pilotes">
+            <p>PILOTES</p>
+          </a>
+          <a href="/constructeurs">
+            <p>CONSTRUCTEURS</p>
+          </a>
+          <a href="/circuits">
+            <p>CIRCUITS</p>
+          </a>
+        </div>
+      </header>
+      <section>
+        <div class="not-found">
+          <p>Aucun pilote ne correspond à votre recherche</p>
+          <br /><br /><br />
+          <a href="/pilotes">Voir tout les pilotes</a>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
+{{end}}

@@ -178,6 +178,8 @@ type Pilote struct {
 	Flag          string
 	Constructor   string
 	ConstructorID string
+	MaxPage       int
+	Saison        []int
 }
 
 type Circuit struct {
@@ -188,4 +190,3 @@ type Circuit struct {
 	Ville     string
 	Seasons   []string
 }
-

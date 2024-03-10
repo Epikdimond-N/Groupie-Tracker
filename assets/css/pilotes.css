@@ -57,6 +57,42 @@ header {
   color: var(--off-white);
 }
 
+.favoris-container,
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 33%;
+  height: 100%;
+}
+
+.search-log-container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 33%;
+}
+
+.search-log-container form {
+  width: fit-content;
+  height: fit-content;
+}
+
+.search-log-container form input,
+.ctn-filtres-search-page form input {
+  padding: 10px;
+  background-color: var(--light1);
+  border-radius: 20px;
+  border: none;
+  color: var(--off-white);
+}
+
+.search-log-container button {
+  display: none;
+}
+
 .content-favoris,
 .content-login {
   height: 100%;
@@ -101,9 +137,9 @@ header {
 }
 
 section {
+  position: relative;
   height: 80%;
   width: 100%;
-  overflow: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,6 +147,234 @@ section {
   background-position: center;
 }
 
+.ctn-filtres-search-page {
+  margin-top: 20px;
+  width: 70%;
+  height: 10%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ctn-filtres-search-page form button {
+  display: none;
+}
+
+#button-filtres {
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+}
+
+.filtres {
+  visibility: hidden;
+  position: absolute;
+  z-index: 2;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(121, 121, 121, 0.5);
+}
+
+.filtres-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.form-filtres {
+  width: 100%;
+  height: 80%;
+}
+
+.filtres-constructeurs,
+.filtres-nationalites,
+.filtres-saisons {
+  width: 33.3%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.label-const {
+  background-color: #b1b1b1;
+  cursor: pointer;
+  caret-color: transparent;
+  display: block;
+  width: 21%;
+  height: 10%;
+  border-radius: 20px;
+}
+
+.label-flag {
+  font-size: small;
+  background-color: #b1b1b1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 16%;
+  height: 10%;
+  border-radius: 20px;
+  margin: 10px;
+  color: #000;
+}
+
+.label-saison {
+  font-size: small;
+  background-color: #b1b1b1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 23%;
+  height: 15%;
+  border-radius: 20px;
+  margin: 10px;
+  color: #000;
+}
+
+label input {
+  display: none;
+  min-height: 150px;
+  width: 100%;
+}
+
+.label-const .img-checked {
+  display: none;
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.label-const .img-unchecked {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.label-flag .img-checked {
+  display: none;
+  width: 40%;
+  height: auto;
+}
+
+.label-flag .img-unchecked {
+  width: 80%;
+  height: auto;
+}
+
+.label-saison .img-checked {
+  display: none;
+}
+
+label input:checked ~ .img-checked {
+  display: inline;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+label input:checked ~ .img-unchecked {
+  display: none;
+  width: 100%;
+}
+
+.label-flag input:checked ~ .img-checked,
+.label-saison input:checked ~ .img-checked {
+  background-color: #fff;
+}
+
+.label-flag img {
+  width: 40%;
+  height: auto;
+}
+
+.label-flag,
+.label-saison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#red_bull input:checked ~ .img-checked {
+  background-color: #15185f;
+}
+
+#ferrari input:checked ~ .img-checked {
+  background-color: #000000;
+}
+#mercedes input:checked ~ .img-checked {
+  background-color: #fe0000;
+}
+#mclaren input:checked ~ .img-checked {
+  background-color: #fd8000;
+}
+#aston_martin input:checked ~ .img-checked {
+  background-color: #00594f;
+}
+#alphatauri input:checked ~ .img-checked {
+  background-color: #041326;
+}
+#alpine input:checked ~ .img-checked {
+  background-color: #0060cb;
+}
+#williams input:checked ~ .img-checked {
+  background-color: #001a53;
+}
+#alfa input:checked ~ .img-checked {
+  background-color: #a50e2d;
+}
+#haas input:checked ~ .img-checked {
+  background-color: #2c2b2e;
+}
+#toro_rosso input:checked ~ .img-checked {
+  background-color: #fcfcfc;
+}
+#sauber input:checked ~ .img-checked {
+  background-color: #1a1a1a;
+}
+#renault input:checked ~ .img-checked {
+  background-color: #d4bc03;
+}
+#manor input:checked ~ .img-checked {
+  background-color: #ffffff;
+}
+#lotus_f1 input:checked ~ .img-checked {
+  background-color: #221e1f;
+}
+#caterham input:checked ~ .img-checked {
+  background-color: #00331c;
+}
+#force_india input:checked ~ .img-checked {
+  background-color: #e9c92c;
+}
+#marussia input:checked ~ .img-checked {
+  background-color: #212121;
+}
+#hrt input:checked ~ .img-checked {
+  background-color: #34322d;
+}
+#lotus_racing input:checked ~ .img-checked {
+  background-color: #c67e02;
+}
+#virgin input:checked ~ .img-checked {
+  background-color: #616161;
+}
+
+.confirm-filtres {
+  height: 20%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .liste-pilotes {
   width: 80%;
   height: 80%;
@@ -120,7 +384,6 @@ section {
   align-items: center;
   justify-content: space-evenly;
 }
-
 .card {
   width: 18%;
   height: 45%;
@@ -130,12 +393,10 @@ section {
   justify-content: space-evenly;
   background-color: var(--dark);
 }
-
 .card img {
   width: auto;
   height: 45%;
 }
-
 .infos {
   width: 100%;
   height: 50%;
@@ -144,7 +405,6 @@ section {
   align-items: center;
   justify-content: center;
 }
-
 .num-flag-nom {
   width: 100%;
   height: 30%;
@@ -153,27 +413,24 @@ section {
   align-items: center;
   justify-content: center;
 }
-
 .num-flag {
   width: 15%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .num-flag img {
   width: 80%;
   height: auto;
 }
-
 .num-flag-nom span {
   background-color: var(--off-white);
   height: 3%;
   width: 10%;
   transform: rotate(90deg);
 }
-
 .constructeur {
+  position: relative;
   width: 100%;
   height: 50%;
   display: flex;
@@ -184,6 +441,29 @@ section {
 .constructeur img {
   height: 100%;
   width: auto;
+  position: absolute;
+  z-index: 1;
+}
+
+.favoris {
+  height: 100%;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: absolute;
+  z-index: 2;
+}
+
+.favoris button {
+  height: 70%;
+  width: 18%;
+  background-color: var(--dark);
+  background-image: url("/static/img/logo/like.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border: none;
 }
 
 .pagination {
@@ -198,10 +478,19 @@ section {
 .pagination a {
   width: 125px;
   height: 50px;
+  text-decoration: none;
 }
 
 .next,
-.previous {
-  width: 100%;
-  height: 100%;
+.previous,
+.confirm-filtres #filtres {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+  color: #000;
 }

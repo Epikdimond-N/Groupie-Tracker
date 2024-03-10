@@ -4,6 +4,7 @@ import (
 	"f1/backend"
 	initTemplate "f1/temps"
 	"net/http"
+	"strconv"
 )
 
 var page = 1
@@ -33,6 +34,7 @@ func PreviousPage(w http.ResponseWriter, r *http.Request) { // on décrément la
 }
 
 func DisplayAccueil(w http.ResponseWriter, r *http.Request) { //on affiche l'accueil
+	filtre = false
 	initTemplate.Temp.ExecuteTemplate(w, "accueil", nil)
 }
 
@@ -56,18 +58,6 @@ func DisplayPilotes(w http.ResponseWriter, r *http.Request) { // affichage opti 
 			}
 		}
 	}
-	// else {
-	// 	for _, i := range filtresPilotes {
-	// 		if i.PageId == page {
-	// 			toSend = append(toSend, i)
-	// 			pilotesFound++
-	// 			if pilotesFound == 10 {
-	// 				break
-	// 			}
-	// 		}
-	// 	}
-	// }
-
 	initTemplate.Temp.ExecuteTemplate(w, "pilotes", toSend)
 }
 
@@ -75,17 +65,152 @@ func FiltresPilotes(w http.ResponseWriter, r *http.Request) {
 	filtre = true
 	filtresPilotes = nil
 	r.ParseForm()
-	query := r.Form["const"] // on récupère tout les filtres
-	for _, i := range query {
-		for _, j := range pilotes {
-			if j.ConstructorID == i {
-				filtresPilotes = append(filtresPilotes, j)
+	queryconst := r.Form["const"]                                    // on récupère tout les filtres constructeurs
+	queryflag := r.Form["flag"]                                      // on récupère tout les filtres drapeaux
+	querysaison := r.Form["saison"]                                  // on récupère tout les filtres saisons
+	if queryconst == nil && queryflag == nil && querysaison == nil { // si il n'y en a aucun
+		filtresPilotes = pilotes
+	} else {
+		if queryconst != nil && queryflag == nil && querysaison == nil { // si ya que constructeur de choisi
+			for _, i := range queryconst {
+				for _, j := range pilotes {
+					if j.ConstructorID == i {
+						filtresPilotes = append(filtresPilotes, j)
+					}
+				}
 			}
+		} else if queryconst != nil && queryflag != nil && querysaison == nil { // si ya constructeur + flag
+			for _, constructeur := range queryconst {
+				for _, flag := range queryflag {
+					for _, pilote := range pilotes {
+						if pilote.Nationality == flag && pilote.ConstructorID == constructeur {
+							var piloteAlreadyFound bool
+							for _, n := range filtresPilotes {
+								if n.DriverID == pilote.DriverID {
+									piloteAlreadyFound = true
+								}
+							}
+							if !piloteAlreadyFound {
+								filtresPilotes = append(filtresPilotes, pilote)
+							}
+
+						}
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag == nil && querysaison != nil { // si ya constructeur + saison
+			for _, constructeur := range queryconst {
+				for _, saison := range querysaison {
+					for _, pilote := range pilotes {
+						for _, l := range pilote.Saison {
+							if strconv.Itoa(l) == saison && pilote.ConstructorID == constructeur {
+								var piloteAlreadyFound bool
+								for _, n := range filtresPilotes {
+									if n.DriverID == pilote.DriverID {
+										piloteAlreadyFound = true
+									}
+								}
+								if !piloteAlreadyFound {
+									filtresPilotes = append(filtresPilotes, pilote)
+								}
+							}
+						}
+
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag != nil && querysaison != nil { // si ya flag + saison
+			for _, flag := range queryflag {
+				for _, saison := range querysaison {
+					for _, pilote := range pilotes {
+						for _, l := range pilote.Saison {
+							if strconv.Itoa(l) == saison && pilote.Nationality == flag {
+								var piloteAlreadyFound bool
+								for _, n := range filtresPilotes {
+									if n.DriverID == pilote.DriverID {
+										piloteAlreadyFound = true
+									}
+								}
+								if !piloteAlreadyFound {
+									filtresPilotes = append(filtresPilotes, pilote)
+								}
+
+							}
+						}
+
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag != nil && querysaison == nil { // si ya que flag
+			for _, flag := range queryflag {
+				for _, pilote := range pilotes {
+					if pilote.Nationality == flag {
+						var piloteAlreadyFound bool
+						for _, i := range filtresPilotes {
+							if i.DriverID == pilote.DriverID {
+								piloteAlreadyFound = true
+							}
+						}
+						if !piloteAlreadyFound {
+							filtresPilotes = append(filtresPilotes, pilote)
+						}
+
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag == nil && querysaison != nil { // si ya que saison
+			for _, i := range querysaison { // on range les filtres
+				for _, j := range pilotes { // on range les pilotes
+					for _, k := range j.Saison { //on range les saisons d'un pilote
+						if strconv.Itoa(k) == i {
+							var piloteAlreadyFound bool
+							for _, l := range filtresPilotes {
+								if l.DriverID == j.DriverID {
+									piloteAlreadyFound = true
+								}
+							}
+							if !piloteAlreadyFound {
+								filtresPilotes = append(filtresPilotes, j)
+							}
+						}
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag != nil && querysaison != nil { // si il y sont tous
+			for _, flag := range queryflag { // drapeaux
+				for _, constructeur := range queryconst { // constructeurs
+					for _, saison := range querysaison { //saisons
+						for _, pilote := range pilotes { // on parcour les pilotes
+							for _, m := range pilote.Saison { // on parcour les saisons du pilotes
+								if strconv.Itoa(m) == saison && flag == pilote.Nationality && constructeur == pilote.ConstructorID {
+									var piloteAlreadyFound bool
+									for _, n := range filtresPilotes {
+										if n.DriverID == pilote.DriverID {
+											piloteAlreadyFound = true
+										}
+									}
+									if !piloteAlreadyFound {
+										filtresPilotes = append(filtresPilotes, pilote)
+									}
+
+								}
+							}
+
+						}
+					}
+				}
+			}
+
 		}
 	}
+
 	filtresPilotes = Pagination(filtresPilotes)
 	page = 1
-	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
+	if filtresPilotes == nil {
+		http.Redirect(w, r, "/notfound", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
+	}
 }
 
 func DisplayConstructeurs(w http.ResponseWriter, r *http.Request) {
@@ -100,4 +225,16 @@ func DisplayCircuits(w http.ResponseWriter, r *http.Request) {
 
 func DisplayLogin(w http.ResponseWriter, r *http.Request) {
 	initTemplate.Temp.ExecuteTemplate(w, "login", nil)
+}
+
+func DisplayNotFound(w http.ResponseWriter, r *http.Request) {
+	filtresPilotes = pilotes
+	initTemplate.Temp.ExecuteTemplate(w, "notfound", nil)
+}
+
+func DisplayPiloteSearch(w http.ResponseWriter, r *http.Request) {
+	nompilote := r.FormValue("search")
+	filtresPilotes = SearchPilote(nompilote)
+	filtresPilotes = Pagination(filtresPilotes)
+	initTemplate.Temp.ExecuteTemplate(w, "pilotes", filtresPilotes)
 }
