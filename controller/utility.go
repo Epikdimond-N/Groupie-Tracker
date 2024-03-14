@@ -71,10 +71,7 @@ func Pilotes() []backend.Pilote {
 			}
 		}
 	}
-	listpilotes = Pagination(listpilotes)
-	// for _, m := range listpilotes {
-	// 	fmt.Println(m.PageId, m.Name, m.FamilyName, m.Nationality, m.Flag)
-	// }
+	listpilotes = PaginationPilote(listpilotes)
 	return listpilotes
 }
 
@@ -82,7 +79,7 @@ func Drapeaux(nationality string) string {
 	var flag string
 	switch nationality {
 	case "Dutch":
-		flag = "Netherland"
+		flag = "Netherlands"
 	case "Monegasque":
 		flag = "Monaco"
 	case "British":
@@ -158,7 +155,8 @@ func Textify() {
 	fmt.Println("Les ID des pilotes ont été écrits dans le fichier nationality.txt")
 }
 
-func Circuits(data backend.InfoCircuits) []backend.Circuit {
+func Circuits() []backend.Circuit {
+	var data backend.InfoCircuits
 	var listcircuits []backend.Circuit
 	for i := 1950; i <= 2023; i++ {
 		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(i) + ".json"
@@ -204,10 +202,57 @@ func Circuits(data backend.InfoCircuits) []backend.Circuit {
 			}
 		}
 	}
+	listcircuits = PaginationCircuits(listcircuits)
 	return listcircuits
 }
 
-func Pagination(data []backend.Pilote) []backend.Pilote {
+// func Constructeurs() []backend.Constructeur {
+// 	var data backend.InfoConstructeurs
+// 	var listconstructeurs []backend.Constructeur
+
+// 	for saison := 2023; saison >= 2011; saison-- {
+// 		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(saison) + "/last/results.json"
+// 		req, err := http.NewRequest("GET", apiUrl, nil)
+// 		if err != nil {
+// 			fmt.Println("Erreur lors de la création de la requête:", err)
+// 			return listconstructeurs
+// 		}
+
+// 		client := &http.Client{}
+// 		resp, err := client.Do(req)
+// 		if err != nil {
+// 			fmt.Println("Erreur lors de l'envoi de la requête:", err)
+// 			return listconstructeurs
+// 		}
+// 		defer resp.Body.Close()
+
+// 		body, err := io.ReadAll(resp.Body)
+// 		if err != nil {
+// 			fmt.Println("Erreur lors de la lecture de la réponse:", err)
+// 			return listconstructeurs
+// 		}
+
+// 		json.Unmarshal(body, &data)
+
+// 		for _, i := range data.MRData.ConstructorTable.Constructors {
+// 			var alreadyFoud bool
+// 			for _, j := range listconstructeurs {
+// 				if i.ConstructorID == j.ConstructorId {
+// 					alreadyFoud = true
+// 					break
+// 				}
+// 			}
+// 			if !alreadyFoud {
+// 				listconstructeurs = append(listconstructeurs, tempData)
+// 			}
+// 		}
+// 	}
+
+// 	listconstructeurs = PaginationConstructeurs(listconstructeurs)
+// 	return listconstructeurs
+// }
+
+func PaginationPilote(data []backend.Pilote) []backend.Pilote {
 	var listpilotes []backend.Pilote
 	var id = 1
 	var attributedId int
@@ -236,14 +281,380 @@ func Pagination(data []backend.Pilote) []backend.Pilote {
 	return listpilotes
 }
 
+func PaginationCircuits(data []backend.Circuit) []backend.Circuit {
+	var listpilotes []backend.Circuit
+	var id = 1
+	var attributedId int
+	for _, i := range data {
+		i.PageId = id
+		listpilotes = append(listpilotes, i)
+		attributedId++
+		if attributedId == 10 {
+			id++
+			attributedId = 0
+		}
+	}
+
+	var maxpage int
+	if len(listpilotes)%10 != 0 {
+		maxpage = (len(listpilotes) / 10) + 1
+		for index, _ := range listpilotes {
+			listpilotes[index].MaxPage = maxpage
+		}
+	} else {
+		maxpage = (len(listpilotes) / 10)
+		for index, _ := range listpilotes {
+			listpilotes[index].MaxPage = maxpage
+		}
+	}
+	return listpilotes
+}
+
+func PaginationConstructeurs(data []backend.Constructeur) []backend.Constructeur { //ne marche pas
+	var listconstructeurs []backend.Constructeur
+	var id = 1
+	var attributedId int
+	for _, i := range data {
+		i.PageId = id
+		listconstructeurs = append(listconstructeurs, i)
+		attributedId++
+		if attributedId == 10 {
+			id++
+			attributedId = 0
+		}
+	}
+
+	var maxpage int
+	if len(listconstructeurs)%10 != 0 {
+		maxpage = (len(listconstructeurs) / 10) + 1
+		for index, _ := range listconstructeurs {
+			listconstructeurs[index].MaxPage = maxpage
+		}
+	} else {
+		maxpage = (len(listconstructeurs) / 10)
+		for index, _ := range listconstructeurs {
+			listconstructeurs[index].MaxPage = maxpage
+		}
+	}
+	return listconstructeurs
+}
+
 func SearchPilote(nompilote string) []backend.Pilote {
 	var found []backend.Pilote
 	nompilote = strings.ToUpper(nompilote)
 	for _, i := range pilotes {
 		if strings.ToUpper(i.FamilyName) == nompilote || strings.ToUpper(i.Name) == nompilote || strings.ToUpper(i.Name)+" "+strings.ToUpper(i.FamilyName) == nompilote {
 			found = append(found, i)
-			break
 		}
 	}
 	return found
+}
+
+func SearchCircuit(nomcircuit string) []backend.Circuit {
+	var found []backend.Circuit
+	for _, i := range circuits {
+		if Search(i.Name, nomcircuit) {
+			found = append(found, i)
+		}
+	}
+	return found
+}
+
+func FiltresPilotes(w http.ResponseWriter, r *http.Request) {
+	filtre = true
+	filtresPilotes = nil
+	r.ParseForm()
+	queryconst := r.Form["const"]                                    // on récupère tout les filtres constructeurs
+	queryflag := r.Form["flag"]                                      // on récupère tout les filtres drapeaux
+	querysaison := r.Form["saison"]                                  // on récupère tout les filtres saisons
+	if queryconst == nil && queryflag == nil && querysaison == nil { // si il n'y en a aucun
+		filtresPilotes = pilotes
+	} else {
+		if queryconst != nil && queryflag == nil && querysaison == nil { // si ya que constructeur de choisi
+			for _, i := range queryconst {
+				for _, j := range pilotes {
+					if j.ConstructorID == i {
+						filtresPilotes = append(filtresPilotes, j)
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag != nil && querysaison == nil { // si ya constructeur + flag
+			for _, constructeur := range queryconst {
+				for _, flag := range queryflag {
+					for _, pilote := range pilotes {
+						if pilote.Nationality == flag && pilote.ConstructorID == constructeur {
+							var piloteAlreadyFound bool
+							for _, n := range filtresPilotes {
+								if n.DriverID == pilote.DriverID {
+									piloteAlreadyFound = true
+								}
+							}
+							if !piloteAlreadyFound {
+								filtresPilotes = append(filtresPilotes, pilote)
+							}
+						}
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag == nil && querysaison != nil { // si ya constructeur + saison
+			for _, constructeur := range queryconst {
+				for _, saison := range querysaison {
+					for _, pilote := range pilotes {
+						for _, l := range pilote.Saison {
+							if strconv.Itoa(l) == saison && pilote.ConstructorID == constructeur {
+								var piloteAlreadyFound bool
+								for _, n := range filtresPilotes {
+									if n.DriverID == pilote.DriverID {
+										piloteAlreadyFound = true
+									}
+								}
+								if !piloteAlreadyFound {
+									filtresPilotes = append(filtresPilotes, pilote)
+								}
+							}
+						}
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag != nil && querysaison != nil { // si ya flag + saison
+			for _, flag := range queryflag {
+				for _, saison := range querysaison {
+					for _, pilote := range pilotes {
+						for _, l := range pilote.Saison {
+							if strconv.Itoa(l) == saison && pilote.Nationality == flag {
+								var piloteAlreadyFound bool
+								for _, n := range filtresPilotes {
+									if n.DriverID == pilote.DriverID {
+										piloteAlreadyFound = true
+									}
+								}
+								if !piloteAlreadyFound {
+									filtresPilotes = append(filtresPilotes, pilote)
+								}
+							}
+						}
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag != nil && querysaison == nil { // si ya que flag
+			for _, flag := range queryflag {
+				for _, pilote := range pilotes {
+					if pilote.Nationality == flag {
+						var piloteAlreadyFound bool
+						for _, i := range filtresPilotes {
+							if i.DriverID == pilote.DriverID {
+								piloteAlreadyFound = true
+							}
+						}
+						if !piloteAlreadyFound {
+							filtresPilotes = append(filtresPilotes, pilote)
+						}
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag == nil && querysaison != nil { // si ya que saison
+			for _, i := range querysaison { // on range les filtres
+				for _, j := range pilotes { // on range les pilotes
+					for _, k := range j.Saison { //on range les saisons d'un pilote
+						if strconv.Itoa(k) == i {
+							var piloteAlreadyFound bool
+							for _, l := range filtresPilotes {
+								if l.DriverID == j.DriverID {
+									piloteAlreadyFound = true
+								}
+							}
+							if !piloteAlreadyFound {
+								filtresPilotes = append(filtresPilotes, j)
+							}
+						}
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag != nil && querysaison != nil { // si il y sont tous
+			for _, flag := range queryflag { // drapeaux
+				for _, constructeur := range queryconst { // constructeurs
+					for _, saison := range querysaison { //saisons
+						for _, pilote := range pilotes { // on parcour les pilotes
+							for _, m := range pilote.Saison { // on parcour les saisons du pilotes
+								if strconv.Itoa(m) == saison && flag == pilote.Nationality && constructeur == pilote.ConstructorID {
+									var piloteAlreadyFound bool
+									for _, n := range filtresPilotes {
+										if n.DriverID == pilote.DriverID {
+											piloteAlreadyFound = true
+										}
+									}
+									if !piloteAlreadyFound {
+										filtresPilotes = append(filtresPilotes, pilote)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	filtresPilotes = PaginationPilote(filtresPilotes)
+	page = 1
+	if filtresPilotes == nil {
+		http.Redirect(w, r, "/pilote/notfound", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
+	}
+}
+
+func FiltresCircuits(w http.ResponseWriter, r *http.Request) {
+	filtre = true
+	filtresCircuits = nil
+	r.ParseForm()
+	queryconst := r.Form["const"]                                    // on récupère tout les filtres constructeurs
+	queryflag := r.Form["flag"]                                      // on récupère tout les filtres drapeaux
+	querysaison := r.Form["saison"]                                  // on récupère tout les filtres saisons
+	if queryconst == nil && queryflag == nil && querysaison == nil { // si il n'y en a aucun
+		filtresPilotes = pilotes
+	} else {
+		if queryconst != nil && queryflag == nil && querysaison == nil { // si ya que constructeur de choisi
+			for _, i := range queryconst {
+				for _, j := range pilotes {
+					if j.ConstructorID == i {
+						filtresPilotes = append(filtresPilotes, j)
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag != nil && querysaison == nil { // si ya constructeur + flag
+			for _, constructeur := range queryconst {
+				for _, flag := range queryflag {
+					for _, pilote := range pilotes {
+						if pilote.Nationality == flag && pilote.ConstructorID == constructeur {
+							var piloteAlreadyFound bool
+							for _, n := range filtresPilotes {
+								if n.DriverID == pilote.DriverID {
+									piloteAlreadyFound = true
+								}
+							}
+							if !piloteAlreadyFound {
+								filtresPilotes = append(filtresPilotes, pilote)
+							}
+
+						}
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag == nil && querysaison != nil { // si ya constructeur + saison
+			for _, constructeur := range queryconst {
+				for _, saison := range querysaison {
+					for _, pilote := range pilotes {
+						for _, l := range pilote.Saison {
+							if strconv.Itoa(l) == saison && pilote.ConstructorID == constructeur {
+								var piloteAlreadyFound bool
+								for _, n := range filtresPilotes {
+									if n.DriverID == pilote.DriverID {
+										piloteAlreadyFound = true
+									}
+								}
+								if !piloteAlreadyFound {
+									filtresPilotes = append(filtresPilotes, pilote)
+								}
+							}
+						}
+
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag != nil && querysaison != nil { // si ya flag + saison
+			for _, flag := range queryflag {
+				for _, saison := range querysaison {
+					for _, pilote := range pilotes {
+						for _, l := range pilote.Saison {
+							if strconv.Itoa(l) == saison && pilote.Nationality == flag {
+								var piloteAlreadyFound bool
+								for _, n := range filtresPilotes {
+									if n.DriverID == pilote.DriverID {
+										piloteAlreadyFound = true
+									}
+								}
+								if !piloteAlreadyFound {
+									filtresPilotes = append(filtresPilotes, pilote)
+								}
+
+							}
+						}
+
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag != nil && querysaison == nil { // si ya que flag
+			for _, flag := range queryflag {
+				for _, pilote := range pilotes {
+					if pilote.Nationality == flag {
+						var piloteAlreadyFound bool
+						for _, i := range filtresPilotes {
+							if i.DriverID == pilote.DriverID {
+								piloteAlreadyFound = true
+							}
+						}
+						if !piloteAlreadyFound {
+							filtresPilotes = append(filtresPilotes, pilote)
+						}
+
+					}
+				}
+			}
+		} else if queryconst == nil && queryflag == nil && querysaison != nil { // si ya que saison
+			for _, i := range querysaison { // on range les filtres
+				for _, j := range pilotes { // on range les pilotes
+					for _, k := range j.Saison { //on range les saisons d'un pilote
+						if strconv.Itoa(k) == i {
+							var piloteAlreadyFound bool
+							for _, l := range filtresPilotes {
+								if l.DriverID == j.DriverID {
+									piloteAlreadyFound = true
+								}
+							}
+							if !piloteAlreadyFound {
+								filtresPilotes = append(filtresPilotes, j)
+							}
+						}
+					}
+				}
+			}
+		} else if queryconst != nil && queryflag != nil && querysaison != nil { // si il y sont tous
+			for _, flag := range queryflag { // drapeaux
+				for _, constructeur := range queryconst { // constructeurs
+					for _, saison := range querysaison { //saisons
+						for _, pilote := range pilotes { // on parcour les pilotes
+							for _, m := range pilote.Saison { // on parcour les saisons du pilotes
+								if strconv.Itoa(m) == saison && flag == pilote.Nationality && constructeur == pilote.ConstructorID {
+									var piloteAlreadyFound bool
+									for _, n := range filtresPilotes {
+										if n.DriverID == pilote.DriverID {
+											piloteAlreadyFound = true
+										}
+									}
+									if !piloteAlreadyFound {
+										filtresPilotes = append(filtresPilotes, pilote)
+									}
+
+								}
+							}
+
+						}
+					}
+				}
+			}
+
+		}
+	}
+
+	filtresPilotes = PaginationPilote(filtresPilotes)
+	page = 1
+	if filtresPilotes == nil {
+		http.Redirect(w, r, "/circuit/notfound", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/circuits", http.StatusSeeOther)
+	}
+}
+
+func Search(word string, s string) bool {
+	return strings.Contains(strings.ToLower(word), strings.ToLower(s))
 }

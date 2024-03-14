@@ -1,7 +1,6 @@
 {{define "pilotes"}}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,13 +43,13 @@
           </div>
         </div>
         <div class="lower-head">
-          <a class="current" href="/pilotes">
+          <a class="current" href="/init/pilotes">
             <p>PILOTES</p>
           </a>
           <a href="/constructeurs">
             <p>CONSTRUCTEURS</p>
           </a>
-          <a href="/circuits">
+          <a href="/init/circuits">
             <p>CIRCUITS</p>
           </a>
         </div>
@@ -605,9 +604,6 @@
                   src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
                   alt="Image {{.Constructor}}"
                 />
-                <form class="favoris" action="/add/pilote_to_favoris">
-                  <button type="submit"></button>
-                </form>
               </div>
             </div>
           </div>
@@ -615,24 +611,24 @@
         </div>
         <div class="pagination">
           {{range .}} {{if eq .MaxPage 1}} {{break}} {{else if eq .PageId 1}}
-          <a href="/next">
+          <a href="/next/pilotes">
             <div class="next">
               <p>NEXT</p>
             </div></a
           >
           {{break}} {{else if eq .PageId .MaxPage}}
-          <a href="/previous">
+          <a href="/previous/pilotes">
             <div class="previous">
               <p>PREVIOUS</p>
             </div>
           </a>
           {{break}} {{else}}
-          <a href="/previous">
+          <a href="/previous/pilotes">
             <div class="previous">
               <p>PREVIOUS</p>
             </div>
           </a>
-          <a href="/next">
+          <a href="/next/pilotes">
             <div class="next">
               <p>NEXT</p>
             </div></a

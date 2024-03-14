@@ -430,7 +430,6 @@ label input:checked ~ .img-unchecked {
   transform: rotate(90deg);
 }
 .constructeur {
-  position: relative;
   width: 100%;
   height: 50%;
   display: flex;
@@ -441,29 +440,6 @@ label input:checked ~ .img-unchecked {
 .constructeur img {
   height: 100%;
   width: auto;
-  position: absolute;
-  z-index: 1;
-}
-
-.favoris {
-  height: 100%;
-  width: 90%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  position: absolute;
-  z-index: 2;
-}
-
-.favoris button {
-  height: 70%;
-  width: 18%;
-  background-color: var(--dark);
-  background-image: url("/static/img/logo/like.png");
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  border: none;
 }
 
 .pagination {

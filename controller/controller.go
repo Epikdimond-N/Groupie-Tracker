@@ -1,19 +1,27 @@
 package controller
 
 import (
+	"encoding/json"
 	"f1/backend"
 	initTemplate "f1/temps"
+	"fmt"
 	"net/http"
-	"strconv"
+	"os"
 )
 
 var page = 1
 var pilotes []backend.Pilote
+var circuits []backend.Circuit
+
 var filtresPilotes []backend.Pilote
+var filtresCircuits []backend.Circuit
+
 var filtre bool
-var toSend []backend.Pilote // liste des pilotes que je vais envoyer
+var toSendPilotes []backend.Pilote   // liste des pilotes que je vais envoyer
+var toSendCircuits []backend.Circuit // liste des circuits que je vais envoyer
 
 func InitPilotes(w http.ResponseWriter, r *http.Request) { // Requete opti
+	page = 1
 	if pilotes != nil { // si on a deja fait la requete on se base sur pilote qui stock en local la requète globale
 		http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
 	} else { // sinon on fait la requete
@@ -23,14 +31,35 @@ func InitPilotes(w http.ResponseWriter, r *http.Request) { // Requete opti
 	}
 }
 
-func NextPage(w http.ResponseWriter, r *http.Request) { // on augmente la page
+func InitCircuits(w http.ResponseWriter, r *http.Request) {
+	page = 1
+	if circuits != nil {
+		http.Redirect(w, r, "/circuits", http.StatusSeeOther)
+	} else { // sinon on fait la requete
+		circuits = Circuits()
+		filtre = false
+		http.Redirect(w, r, "/circuits", http.StatusSeeOther)
+	}
+}
+
+func NextPagePilote(w http.ResponseWriter, r *http.Request) { // on augmente la page
 	page++
 	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
 }
 
-func PreviousPage(w http.ResponseWriter, r *http.Request) { // on décrément la page
+func PreviousPagePilote(w http.ResponseWriter, r *http.Request) { // on décrément la page
 	page--
 	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
+}
+
+func NextPageCircuit(w http.ResponseWriter, r *http.Request) {
+	page++
+	http.Redirect(w, r, "/circuits", http.StatusSeeOther)
+}
+
+func PreviousPageCircuit(w http.ResponseWriter, r *http.Request) {
+	page--
+	http.Redirect(w, r, "/circuits", http.StatusSeeOther)
 }
 
 func DisplayAccueil(w http.ResponseWriter, r *http.Request) { //on affiche l'accueil
@@ -39,12 +68,12 @@ func DisplayAccueil(w http.ResponseWriter, r *http.Request) { //on affiche l'acc
 }
 
 func DisplayPilotes(w http.ResponseWriter, r *http.Request) { // affichage opti des pilotes
-	toSend = nil
+	toSendPilotes = nil
 	var pilotesFound int // var pour opti la recherche
 	if !filtre {
 		for _, i := range pilotes { // on s'arrete des qu'on trouve 10 qui ont l'ID correspondant à la page sur laquelle on se trouve
 			if i.PageId == page {
-				toSend = append(toSend, i)
+				toSendPilotes = append(toSendPilotes, i)
 				pilotesFound++
 				if pilotesFound == 10 {
 					break
@@ -54,187 +83,79 @@ func DisplayPilotes(w http.ResponseWriter, r *http.Request) { // affichage opti 
 	} else {
 		for _, i := range filtresPilotes {
 			if i.PageId == page {
-				toSend = append(toSend, i)
+				toSendPilotes = append(toSendPilotes, i)
 			}
 		}
 	}
-	initTemplate.Temp.ExecuteTemplate(w, "pilotes", toSend)
+	initTemplate.Temp.ExecuteTemplate(w, "pilotes", toSendPilotes)
 }
 
-func FiltresPilotes(w http.ResponseWriter, r *http.Request) {
-	filtre = true
-	filtresPilotes = nil
-	r.ParseForm()
-	queryconst := r.Form["const"]                                    // on récupère tout les filtres constructeurs
-	queryflag := r.Form["flag"]                                      // on récupère tout les filtres drapeaux
-	querysaison := r.Form["saison"]                                  // on récupère tout les filtres saisons
-	if queryconst == nil && queryflag == nil && querysaison == nil { // si il n'y en a aucun
-		filtresPilotes = pilotes
-	} else {
-		if queryconst != nil && queryflag == nil && querysaison == nil { // si ya que constructeur de choisi
-			for _, i := range queryconst {
-				for _, j := range pilotes {
-					if j.ConstructorID == i {
-						filtresPilotes = append(filtresPilotes, j)
-					}
+func DisplayCircuits(w http.ResponseWriter, r *http.Request) { // on affiche le template circuits
+	toSendCircuits = nil
+	var circuitsFound int
+	if !filtre {
+		for _, i := range circuits {
+			if i.PageId == page {
+				toSendCircuits = append(toSendCircuits, i)
+				circuitsFound++
+				if circuitsFound == 10 {
+					break
 				}
 			}
-		} else if queryconst != nil && queryflag != nil && querysaison == nil { // si ya constructeur + flag
-			for _, constructeur := range queryconst {
-				for _, flag := range queryflag {
-					for _, pilote := range pilotes {
-						if pilote.Nationality == flag && pilote.ConstructorID == constructeur {
-							var piloteAlreadyFound bool
-							for _, n := range filtresPilotes {
-								if n.DriverID == pilote.DriverID {
-									piloteAlreadyFound = true
-								}
-							}
-							if !piloteAlreadyFound {
-								filtresPilotes = append(filtresPilotes, pilote)
-							}
-
-						}
-					}
-				}
-			}
-		} else if queryconst != nil && queryflag == nil && querysaison != nil { // si ya constructeur + saison
-			for _, constructeur := range queryconst {
-				for _, saison := range querysaison {
-					for _, pilote := range pilotes {
-						for _, l := range pilote.Saison {
-							if strconv.Itoa(l) == saison && pilote.ConstructorID == constructeur {
-								var piloteAlreadyFound bool
-								for _, n := range filtresPilotes {
-									if n.DriverID == pilote.DriverID {
-										piloteAlreadyFound = true
-									}
-								}
-								if !piloteAlreadyFound {
-									filtresPilotes = append(filtresPilotes, pilote)
-								}
-							}
-						}
-
-					}
-				}
-			}
-		} else if queryconst == nil && queryflag != nil && querysaison != nil { // si ya flag + saison
-			for _, flag := range queryflag {
-				for _, saison := range querysaison {
-					for _, pilote := range pilotes {
-						for _, l := range pilote.Saison {
-							if strconv.Itoa(l) == saison && pilote.Nationality == flag {
-								var piloteAlreadyFound bool
-								for _, n := range filtresPilotes {
-									if n.DriverID == pilote.DriverID {
-										piloteAlreadyFound = true
-									}
-								}
-								if !piloteAlreadyFound {
-									filtresPilotes = append(filtresPilotes, pilote)
-								}
-
-							}
-						}
-
-					}
-				}
-			}
-		} else if queryconst == nil && queryflag != nil && querysaison == nil { // si ya que flag
-			for _, flag := range queryflag {
-				for _, pilote := range pilotes {
-					if pilote.Nationality == flag {
-						var piloteAlreadyFound bool
-						for _, i := range filtresPilotes {
-							if i.DriverID == pilote.DriverID {
-								piloteAlreadyFound = true
-							}
-						}
-						if !piloteAlreadyFound {
-							filtresPilotes = append(filtresPilotes, pilote)
-						}
-
-					}
-				}
-			}
-		} else if queryconst == nil && queryflag == nil && querysaison != nil { // si ya que saison
-			for _, i := range querysaison { // on range les filtres
-				for _, j := range pilotes { // on range les pilotes
-					for _, k := range j.Saison { //on range les saisons d'un pilote
-						if strconv.Itoa(k) == i {
-							var piloteAlreadyFound bool
-							for _, l := range filtresPilotes {
-								if l.DriverID == j.DriverID {
-									piloteAlreadyFound = true
-								}
-							}
-							if !piloteAlreadyFound {
-								filtresPilotes = append(filtresPilotes, j)
-							}
-						}
-					}
-				}
-			}
-		} else if queryconst != nil && queryflag != nil && querysaison != nil { // si il y sont tous
-			for _, flag := range queryflag { // drapeaux
-				for _, constructeur := range queryconst { // constructeurs
-					for _, saison := range querysaison { //saisons
-						for _, pilote := range pilotes { // on parcour les pilotes
-							for _, m := range pilote.Saison { // on parcour les saisons du pilotes
-								if strconv.Itoa(m) == saison && flag == pilote.Nationality && constructeur == pilote.ConstructorID {
-									var piloteAlreadyFound bool
-									for _, n := range filtresPilotes {
-										if n.DriverID == pilote.DriverID {
-											piloteAlreadyFound = true
-										}
-									}
-									if !piloteAlreadyFound {
-										filtresPilotes = append(filtresPilotes, pilote)
-									}
-
-								}
-							}
-
-						}
-					}
-				}
-			}
-
 		}
 	}
-
-	filtresPilotes = Pagination(filtresPilotes)
-	page = 1
-	if filtresPilotes == nil {
-		http.Redirect(w, r, "/notfound", http.StatusSeeOther)
-	} else {
-		http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
-	}
+	initTemplate.Temp.ExecuteTemplate(w, "circuits", toSendCircuits)
 }
 
 func DisplayConstructeurs(w http.ResponseWriter, r *http.Request) {
 	initTemplate.Temp.ExecuteTemplate(w, "constructeurs", nil)
 }
 
-func DisplayCircuits(w http.ResponseWriter, r *http.Request) {
-	var data backend.InfoCircuits
-	circuits := Circuits(data)
-	initTemplate.Temp.ExecuteTemplate(w, "circuits", circuits)
-}
-
 func DisplayLogin(w http.ResponseWriter, r *http.Request) {
 	initTemplate.Temp.ExecuteTemplate(w, "login", nil)
 }
 
-func DisplayNotFound(w http.ResponseWriter, r *http.Request) {
+func DisplayPiloteNotFound(w http.ResponseWriter, r *http.Request) {
 	filtresPilotes = pilotes
-	initTemplate.Temp.ExecuteTemplate(w, "notfound", nil)
+	initTemplate.Temp.ExecuteTemplate(w, "pilotenotfound", nil)
+}
+
+func DisplayCircuitNotFound(w http.ResponseWriter, r *http.Request) {
+	filtresCircuits = circuits
+	initTemplate.Temp.ExecuteTemplate(w, "circuitnotfound", nil)
 }
 
 func DisplayPiloteSearch(w http.ResponseWriter, r *http.Request) {
 	nompilote := r.FormValue("search")
 	filtresPilotes = SearchPilote(nompilote)
-	filtresPilotes = Pagination(filtresPilotes)
+	filtresPilotes = PaginationPilote(filtresPilotes)
 	initTemplate.Temp.ExecuteTemplate(w, "pilotes", filtresPilotes)
+}
+
+func DisplayCircuitSearch(w http.ResponseWriter, r *http.Request) {
+	nomcircuit := r.FormValue("search")
+	filtresCircuits = SearchCircuit(nomcircuit)
+	filtresCircuits = PaginationCircuits(filtresCircuits)
+	initTemplate.Temp.ExecuteTemplate(w, "circuits", filtresCircuits)
+}
+
+func InitFavoris(w http.ResponseWriter, r *http.Request) {
+	toAdd := r.URL.Query().Get("id")
+	fmt.Println("to add :", toAdd)
+	for _, i := range pilotes {
+		if i.DriverID == toAdd {
+			fichierJSON, err := os.Open("fav.json")
+			if err != nil {
+				fmt.Println("Erreur lors de l'ouverture du fichier JSON :", err)
+				return
+			}
+			defer fichierJSON.Close()
+			encodeur := json.NewEncoder(fichierJSON)
+			if err := encodeur.Encode(&i); err != nil {
+				fmt.Println("Erreur lors de l'encodage en JSON :", err)
+				return
+			}
+		}
+	}
+	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
 }

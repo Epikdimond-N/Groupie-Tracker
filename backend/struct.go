@@ -166,6 +166,26 @@ type InfoCircuits struct {
 	} `json:"MRData"`
 }
 
+type InfoConstructeurs struct {
+	MRData struct {
+		Xmlns            string `json:"xmlns"`
+		Series           string `json:"series"`
+		URL              string `json:"url"`
+		Limit            string `json:"limit"`
+		Offset           string `json:"offset"`
+		Total            string `json:"total"`
+		ConstructorTable struct {
+			Season       string `json:"season"`
+			Constructors []struct {
+				ConstructorID string `json:"constructorId"`
+				URL           string `json:"url"`
+				Name          string `json:"name"`
+				Nationality   string `json:"nationality"`
+			} `json:"Constructors"`
+		} `json:"ConstructorTable"`
+	} `json:"MRData"`
+}
+
 type Pilote struct {
 	PageId        int
 	DriverID      string
@@ -183,10 +203,21 @@ type Pilote struct {
 }
 
 type Circuit struct {
+	PageId    int
 	IDCircuit string
 	GPName    string
 	Name      string
 	Pays      string
 	Ville     string
+	MaxPage   int
 	Seasons   []string
+}
+
+type Constructeur struct {
+	PageId        int
+	MaxPage       int
+	Image         string
+	ConstructorId string
+	Name          string
+	Nationality   string
 }

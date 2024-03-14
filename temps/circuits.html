@@ -4,15 +4,605 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/circuits.css" />
+    <link rel="icon" href="/static/img/logo/logo-transparent.png" />
     <title>Circuits</title>
   </head>
   <body>
-      <section class="page-circuits">
-        {{range .}}
-          <p>{{.Name}}</p>
-          <p>{{.IDCircuit}}</p>
-        {{end}}
+    <script defer>
+      function DisplayFiltres2() {
+        const stockFiltres = document.getElementById("filtres");
+        stockFiltres.style.visibility = "visible";
+        const stockButtonFiltres = document.getElementById("button-filtres");
+        stockButtonFiltres.style.visibility = "hidden";
+      }
+      function DisplayPasFiltres() {
+        const stockFiltres = document.getElementById("filtres");
+        stockFiltres.style.visibility = "hidden";
+        const stockButtonFiltres = document.getElementById("button-filtres");
+        stockButtonFiltres.style.visibility = "visible";
+      }
+    </script>
+    <div class="content-all">
+      <header>
+        <div class="upper-head">
+          <div class="favoris-container">
+            <a href="/favoris">
+              <div class="content-favoris">
+                <img
+                  src="/static/img/logo/logo-favoris.png"
+                  alt="Image Favoris"
+                />
+                <p>Favoris</p>
+              </div>
+            </a>
+          </div>
+          <div class="logo-container">
+            <a href="/accueil">
+              <img class="logo" src="/static/img/logo/logo.png" alt="Logo F1" />
+            </a>
+          </div>
+          <div class="search-log-container">
+            <form action="/pilotes/search">
+              <input type="text" placeholder="Rechercher un pilote" />
+              <button type="submit"></button>
+            </form>
+            <a href="/login">
+              <div class="content-login">
+                <img src="/static/img/logo/login-icon3.png" alt="Image Login" />
+                <p>Login</p>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="lower-head">
+          <a href="/init/pilotes">
+            <p>PILOTES</p>
+          </a>
+          <a href="/init/constructeurs">
+            <p>CONSTRUCTEURS</p>
+          </a>
+          <a class="current" href="/init/circuits">
+            <p>CIRCUITS</p>
+          </a>
+        </div>
+      </header>
+      <section>
+        <div class="ctn-filtres-search-page">
+          <button onclick="DisplayFiltres2()" id="button-filtres">
+            FILTRES
+          </button>
+          <form action="/search/circuits" method="post">
+            <input
+              name="search"
+              type="text"
+              placeholder="Rechercher un circuit"
+            />
+            <button type="submit"></button>
+          </form>
+
+          <p class="num-page">
+            PAGE {{range .}}{{.PageId}} / {{.MaxPage}} {{break}} {{end}}
+          </p>
+        </div>
+        <div class="filtres" id="filtres">
+          <form class="form-filtres" action="/filtres/circuits" method="post">
+            <div class="filtres-container">
+              <div class="filtres-1">
+                <label class="label-flag">
+                  <input type="checkbox" value="Dutch" name="flag" />
+                  <p class="img-unchecked">Netherland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Netherland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Monegasque" name="flag" />
+                  <p class="img-unchecked">Monaco</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Monaco.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="British" name="flag" />
+                  <p class="img-unchecked">UK</p>
+                  <img class="img-checked" src="/static/img/drapeaux/UK.png" />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Mexican" name="flag" />
+                  <p class="img-unchecked">Mexico</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Mexico.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Australian" name="flag" />
+                  <p class="img-unchecked">Australia</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Australia.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Spanish" name="flag" />
+                  <p class="img-unchecked">Spain</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Spain.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Japanese" name="flag" />
+                  <p class="img-unchecked">Japan</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Japan.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Canadian" name="flag" />
+                  <p class="img-unchecked">Canada</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Canada.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="French" name="flag" />
+                  <p class="img-unchecked">France</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/France.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Thai" name="flag" />
+                  <p class="img-unchecked">Thailand</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Thailand.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="German" name="flag" />
+                  <p class="img-unchecked">Germany</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Germany.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="American" name="flag" />
+                  <p class="img-unchecked">USA</p>
+                  <img class="img-checked" src="/static/img/drapeaux/USA.png" />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Chinese" name="flag" />
+                  <p class="img-unchecked">China</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/China.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Finnish" name="flag" />
+                  <p class="img-unchecked">Finland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Finland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Danish" name="flag" />
+                  <p class="img-unchecked">Denmark</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Denmark.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Brazillian" name="flag" />
+                  <p class="img-unchecked">Brazil</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Brazil.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Polish" name="flag" />
+                  <p class="img-unchecked">Poland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Poland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Venezuelan" name="flag" />
+                  <p class="img-unchecked">Venezuela</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Venezuela.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Indian" name="flag" />
+                  <p class="img-unchecked">India</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/India.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Italian" name="flag" />
+                  <p class="img-unchecked">Italy</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Italy.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Belgian" name="flag" />
+                  <p class="img-unchecked">Belgium</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Belgium.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Russian" name="flag" />
+                  <p class="img-unchecked">Russia</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Russia.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Swedish" name="flag" />
+                  <p class="img-unchecked">Sweden</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Sweden.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Swiss" name="flag" />
+                  <p class="img-unchecked">Switzerland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Switzerland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="New Zealander" name="flag" />
+                  <p class="img-unchecked">New Zealand</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/New_Zealand.png"
+                  />
+                </label>
+              </div>
+              <div class="filtres-2">
+                <label class="label-saison">
+                  <input type="checkbox" value="1950" name="saison" />
+                  <p class="img-unchecked">1950</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1951" name="saison" />
+                  <p class="img-unchecked">1951</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1952" name="saison" />
+                  <p class="img-unchecked">1952</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1953" name="saison" />
+                  <p class="img-unchecked">1953</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1954" name="saison" />
+                  <p class="img-unchecked">1954</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1955" name="saison" />
+                  <p class="img-unchecked">1955</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1956" name="saison" />
+                  <p class="img-unchecked">1956</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1957" name="saison" />
+                  <p class="img-unchecked">1957</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1958" name="saison" />
+                  <p class="img-unchecked">1958</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1959" name="saison" />
+                  <p class="img-unchecked">1959</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1960" name="saison" />
+                  <p class="img-unchecked">1960</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1961" name="saison" />
+                  <p class="img-unchecked">1961</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1962" name="saison" />
+                  <p class="img-unchecked">1962</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1963" name="saison" />
+                  <p class="img-unchecked">1963</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1964" name="saison" />
+                  <p class="img-unchecked">1964</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1965" name="saison" />
+                  <p class="img-unchecked">1965</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1966" name="saison" />
+                  <p class="img-unchecked">1966</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1967" name="saison" />
+                  <p class="img-unchecked">1967</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1968" name="saison" />
+                  <p class="img-unchecked">1968</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1969" name="saison" />
+                  <p class="img-unchecked">1969</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1970" name="saison" />
+                  <p class="img-unchecked">1970</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1971" name="saison" />
+                  <p class="img-unchecked">1971</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1972" name="saison" />
+                  <p class="img-unchecked">1972</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1973" name="saison" />
+                  <p class="img-unchecked">1973</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1974" name="saison" />
+                  <p class="img-unchecked">1974</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1975" name="saison" />
+                  <p class="img-unchecked">1975</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1976" name="saison" />
+                  <p class="img-unchecked">1976</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1977" name="saison" />
+                  <p class="img-unchecked">1977</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1978" name="saison" />
+                  <p class="img-unchecked">1978</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1979" name="saison" />
+                  <p class="img-unchecked">1979</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1980" name="saison" />
+                  <p class="img-unchecked">1980</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1981" name="saison" />
+                  <p class="img-unchecked">1981</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1982" name="saison" />
+                  <p class="img-unchecked">1982</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1983" name="saison" />
+                  <p class="img-unchecked">1983</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1984" name="saison" />
+                  <p class="img-unchecked">1984</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1985" name="saison" />
+                  <p class="img-unchecked">1985</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1986" name="saison" />
+                  <p class="img-unchecked">1986</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1987" name="saison" />
+                  <p class="img-unchecked">1987</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1988" name="saison" />
+                  <p class="img-unchecked">1988</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1989" name="saison" />
+                  <p class="img-unchecked">1989</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1990" name="saison" />
+                  <p class="img-unchecked">1990</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1991" name="saison" />
+                  <p class="img-unchecked">1991</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1992" name="saison" />
+                  <p class="img-unchecked">1992</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1993" name="saison" />
+                  <p class="img-unchecked">1993</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1994" name="saison" />
+                  <p class="img-unchecked">1994</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1995" name="saison" />
+                  <p class="img-unchecked">1995</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1996" name="saison" />
+                  <p class="img-unchecked">1996</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1997" name="saison" />
+                  <p class="img-unchecked">1997</p> </label
+                ><label class="label-saison">
+                  <input type="checkbox" value="1998" name="saison" />
+                  <p class="img-unchecked">1998</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="1999" name="saison" />
+                  <p class="img-unchecked">1999</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2000" name="saison" />
+                  <p class="img-unchecked">2000</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2001" name="saison" />
+                  <p class="img-unchecked">2001</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2002" name="saison" />
+                  <p class="img-unchecked">2002</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2003" name="saison" />
+                  <p class="img-unchecked">2003</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2004" name="saison" />
+                  <p class="img-unchecked">2004</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2005" name="saison" />
+                  <p class="img-unchecked">2005</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2006" name="saison" />
+                  <p class="img-unchecked">2006</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2007" name="saison" />
+                  <p class="img-unchecked">2007</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2008" name="saison" />
+                  <p class="img-unchecked">2008</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2009" name="saison" />
+                  <p class="img-unchecked">2009</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2010" name="saison" />
+                  <p class="img-unchecked">2010</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2011" name="saison" />
+                  <p class="img-unchecked">2011</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2012" name="saison" />
+                  <p class="img-unchecked">2012</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2013" name="saison" />
+                  <p class="img-unchecked">2013</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2014" name="saison" />
+                  <p class="img-unchecked">2014</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2015" name="saison" />
+                  <p class="img-unchecked">2015</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2016" name="saison" />
+                  <p class="img-unchecked">2016</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2017" name="saison" />
+                  <p class="img-unchecked">2017</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2018" name="saison" />
+                  <p class="img-unchecked">2018</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2019" name="saison" />
+                  <p class="img-unchecked">2019</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2020" name="saison" />
+                  <p class="img-unchecked">2020</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2021" name="saison" />
+                  <p class="img-unchecked">2021</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2022" name="saison" />
+                  <p class="img-unchecked">2022</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2023" name="saison" />
+                  <p class="img-unchecked">2023</p>
+                </label>
+              </div>
+            </div>
+            <div class="confirm-filtres">
+              <button type="submit" id="filtres" onclick="DisplayPasFiltres()">
+                CONFIRM
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="liste-items">
+          {{range .}}
+          <div class="card">
+            <div class="img-container">
+              <img
+                src="/static/img/circuits/{{.IDCircuit}}.jpg"
+                alt="Image {{.Name}}"
+              />
+            </div>
+
+            <div class="infos">
+              <div class="infos-top">
+                <img
+                  src="/static/img/drapeaux/{{.Pays}}.png"
+                  alt="Drapeau {{.Pays}}"
+                />
+                <p>{{.Name}}</p>
+              </div>
+              <div class="infos-bottom">
+                <p>{{.GPName}}</p>
+              </div>
+
+              <!-- <form
+                class="favoris"
+                action="/action/pilote_to_favoris?id={{.IDCircuit}}"
+                method="post"
+              >
+                <button type="submit"></button>
+              </form> -->
+            </div>
+          </div>
+          {{end}}
+        </div>
+        <div class="pagination">
+          {{range .}} {{if eq .MaxPage 1}} {{break}} {{else if eq .PageId 1}}
+          <a href="/next/circuits">
+            <div class="next">
+              <p>NEXT</p>
+            </div></a
+          >
+          {{break}} {{else if eq .PageId .MaxPage}}
+          <a href="/previous/circuits">
+            <div class="previous">
+              <p>PREVIOUS</p>
+            </div>
+          </a>
+          {{break}} {{else}}
+          <a href="/previous/circuits">
+            <div class="previous">
+              <p>PREVIOUS</p>
+            </div>
+          </a>
+          <a href="/next/circuits">
+            <div class="next">
+              <p>NEXT</p>
+            </div></a
+          >
+          {{break}} {{end}} {{end}}
+        </div>
       </section>
+    </div>
   </body>
 </html>
 {{end}}
