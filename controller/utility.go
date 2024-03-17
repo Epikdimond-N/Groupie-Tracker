@@ -128,6 +128,10 @@ func Drapeaux(nationality string) string {
 		flag = "Switzerland"
 	case "New Zealander":
 		flag = "New_Zealand"
+	case "Malaysian":
+		flag = "Malaysia"
+	case "Austrian":
+		flag = "Austria"
 	}
 	return flag
 }
@@ -206,51 +210,59 @@ func Circuits() []backend.Circuit {
 	return listcircuits
 }
 
-// func Constructeurs() []backend.Constructeur {
-// 	var data backend.InfoConstructeurs
-// 	var listconstructeurs []backend.Constructeur
+func Constructeurs() []backend.Constructeur {
+	var data backend.InfoConstructeurs
+	var listconstructeurs []backend.Constructeur
+	for saison := 2023; saison >= 2011; saison-- {
+		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(saison) + "/constructors.json"
+		req, err := http.NewRequest("GET", apiUrl, nil)
+		if err != nil {
+			fmt.Println("Erreur lors de la création de la requête:", err)
+			return listconstructeurs
+		}
 
-// 	for saison := 2023; saison >= 2011; saison-- {
-// 		apiUrl := "http://ergast.com/api/f1/" + strconv.Itoa(saison) + "/last/results.json"
-// 		req, err := http.NewRequest("GET", apiUrl, nil)
-// 		if err != nil {
-// 			fmt.Println("Erreur lors de la création de la requête:", err)
-// 			return listconstructeurs
-// 		}
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Println("Erreur lors de l'envoi de la requête:", err)
+			return listconstructeurs
+		}
+		defer resp.Body.Close()
 
-// 		client := &http.Client{}
-// 		resp, err := client.Do(req)
-// 		if err != nil {
-// 			fmt.Println("Erreur lors de l'envoi de la requête:", err)
-// 			return listconstructeurs
-// 		}
-// 		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Erreur lors de la lecture de la réponse:", err)
+			return listconstructeurs
+		}
 
-// 		body, err := io.ReadAll(resp.Body)
-// 		if err != nil {
-// 			fmt.Println("Erreur lors de la lecture de la réponse:", err)
-// 			return listconstructeurs
-// 		}
-
-// 		json.Unmarshal(body, &data)
-
-// 		for _, i := range data.MRData.ConstructorTable.Constructors {
-// 			var alreadyFoud bool
-// 			for _, j := range listconstructeurs {
-// 				if i.ConstructorID == j.ConstructorId {
-// 					alreadyFoud = true
-// 					break
-// 				}
-// 			}
-// 			if !alreadyFoud {
-// 				listconstructeurs = append(listconstructeurs, tempData)
-// 			}
-// 		}
-// 	}
-
-// 	listconstructeurs = PaginationConstructeurs(listconstructeurs)
-// 	return listconstructeurs
-// }
+		json.Unmarshal(body, &data)
+		var currentSaison, _ = strconv.Atoi(data.MRData.ConstructorTable.Season)
+		for _, j := range data.MRData.ConstructorTable.Constructors {
+			var alreadyFoud bool
+			for _, k := range listconstructeurs {
+				if k.ConstructorId == j.ConstructorID {
+					alreadyFoud = true
+					for index, l := range listconstructeurs {
+						if l.ConstructorId == j.ConstructorID {
+							listconstructeurs[index].Saisons = append(listconstructeurs[index].Saisons, saison)
+						}
+					}
+				}
+			}
+			if !alreadyFoud {
+				var tempData backend.Constructeur
+				tempData.ConstructorId = j.ConstructorID
+				tempData.Image = j.ConstructorID
+				tempData.Name = j.Name
+				tempData.Nationality = Drapeaux(j.Nationality)
+				tempData.Saisons = append(tempData.Saisons, currentSaison)
+				listconstructeurs = append(listconstructeurs, tempData)
+			}
+		}
+	}
+	listconstructeurs = PaginationConstructeurs(listconstructeurs)
+	return listconstructeurs
+}
 
 func PaginationPilote(data []backend.Pilote) []backend.Pilote {
 	var listpilotes []backend.Pilote
@@ -357,6 +369,17 @@ func SearchCircuit(nomcircuit string) []backend.Circuit {
 			found = append(found, i)
 		}
 	}
+	return found
+}
+
+func SearchConstructeur(nomconstructeur string) []backend.Constructeur {
+	var found []backend.Constructeur
+	for _, i := range constructeurs {
+		if Search(i.Name, nomconstructeur) {
+			found = append(found, i)
+		}
+	}
+	fmt.Println(found)
 	return found
 }
 
@@ -507,154 +530,184 @@ func FiltresCircuits(w http.ResponseWriter, r *http.Request) {
 	filtre = true
 	filtresCircuits = nil
 	r.ParseForm()
-	queryconst := r.Form["const"]                                    // on récupère tout les filtres constructeurs
-	queryflag := r.Form["flag"]                                      // on récupère tout les filtres drapeaux
-	querysaison := r.Form["saison"]                                  // on récupère tout les filtres saisons
-	if queryconst == nil && queryflag == nil && querysaison == nil { // si il n'y en a aucun
-		filtresPilotes = pilotes
+	queryflag := r.Form["flag"]     // on récupère tout les filtres drapeaux
+	querysaison := r.Form["saison"] // on récupère tout les filtres saisons
+	fmt.Println("flag : ", queryflag)
+	if queryflag == nil && querysaison == nil { // si il n'y en a aucun
+		filtresCircuits = circuits
 	} else {
-		if queryconst != nil && queryflag == nil && querysaison == nil { // si ya que constructeur de choisi
-			for _, i := range queryconst {
-				for _, j := range pilotes {
-					if j.ConstructorID == i {
-						filtresPilotes = append(filtresPilotes, j)
-					}
-				}
-			}
-		} else if queryconst != nil && queryflag != nil && querysaison == nil { // si ya constructeur + flag
-			for _, constructeur := range queryconst {
-				for _, flag := range queryflag {
-					for _, pilote := range pilotes {
-						if pilote.Nationality == flag && pilote.ConstructorID == constructeur {
-							var piloteAlreadyFound bool
-							for _, n := range filtresPilotes {
-								if n.DriverID == pilote.DriverID {
-									piloteAlreadyFound = true
-								}
+		if queryflag != nil && querysaison == nil { // si ya flag
+			for _, flag := range queryflag {
+				for _, circuit := range circuits {
+					if circuit.Pays == Drapeaux(flag) {
+						var circuitAlreadyFound bool
+						for _, n := range filtresCircuits {
+							if n.IDCircuit == circuit.IDCircuit {
+								circuitAlreadyFound = true
 							}
-							if !piloteAlreadyFound {
-								filtresPilotes = append(filtresPilotes, pilote)
-							}
-
 						}
-					}
-				}
-			}
-		} else if queryconst != nil && queryflag == nil && querysaison != nil { // si ya constructeur + saison
-			for _, constructeur := range queryconst {
-				for _, saison := range querysaison {
-					for _, pilote := range pilotes {
-						for _, l := range pilote.Saison {
-							if strconv.Itoa(l) == saison && pilote.ConstructorID == constructeur {
-								var piloteAlreadyFound bool
-								for _, n := range filtresPilotes {
-									if n.DriverID == pilote.DriverID {
-										piloteAlreadyFound = true
-									}
-								}
-								if !piloteAlreadyFound {
-									filtresPilotes = append(filtresPilotes, pilote)
-								}
-							}
+						if !circuitAlreadyFound {
+							filtresCircuits = append(filtresCircuits, circuit)
 						}
 
 					}
 				}
 			}
-		} else if queryconst == nil && queryflag != nil && querysaison != nil { // si ya flag + saison
+		} else if queryflag == nil && querysaison != nil { // si ya saison
+
+			for _, saison := range querysaison {
+				for _, circuit := range circuits {
+					for _, l := range circuit.Seasons {
+						if l == saison {
+							var circuitAlreadyFound bool
+							for _, n := range filtresCircuits {
+								if n.IDCircuit == circuit.IDCircuit {
+									circuitAlreadyFound = true
+								}
+							}
+							if !circuitAlreadyFound {
+								filtresCircuits = append(filtresCircuits, circuit)
+							}
+						}
+					}
+
+				}
+			}
+		} else if queryflag != nil && querysaison != nil { // si ya flag + saison
 			for _, flag := range queryflag {
 				for _, saison := range querysaison {
-					for _, pilote := range pilotes {
-						for _, l := range pilote.Saison {
-							if strconv.Itoa(l) == saison && pilote.Nationality == flag {
-								var piloteAlreadyFound bool
-								for _, n := range filtresPilotes {
-									if n.DriverID == pilote.DriverID {
-										piloteAlreadyFound = true
+					for _, circuit := range circuits {
+						for _, l := range circuit.Seasons {
+							if l == saison && circuit.Pays == Drapeaux(flag) {
+								var circuitAlreadyFound bool
+								for _, n := range filtresCircuits {
+									if n.IDCircuit == circuit.IDCircuit {
+										circuitAlreadyFound = true
 									}
 								}
-								if !piloteAlreadyFound {
-									filtresPilotes = append(filtresPilotes, pilote)
-								}
-
-							}
-						}
-
-					}
-				}
-			}
-		} else if queryconst == nil && queryflag != nil && querysaison == nil { // si ya que flag
-			for _, flag := range queryflag {
-				for _, pilote := range pilotes {
-					if pilote.Nationality == flag {
-						var piloteAlreadyFound bool
-						for _, i := range filtresPilotes {
-							if i.DriverID == pilote.DriverID {
-								piloteAlreadyFound = true
-							}
-						}
-						if !piloteAlreadyFound {
-							filtresPilotes = append(filtresPilotes, pilote)
-						}
-
-					}
-				}
-			}
-		} else if queryconst == nil && queryflag == nil && querysaison != nil { // si ya que saison
-			for _, i := range querysaison { // on range les filtres
-				for _, j := range pilotes { // on range les pilotes
-					for _, k := range j.Saison { //on range les saisons d'un pilote
-						if strconv.Itoa(k) == i {
-							var piloteAlreadyFound bool
-							for _, l := range filtresPilotes {
-								if l.DriverID == j.DriverID {
-									piloteAlreadyFound = true
+								if !circuitAlreadyFound {
+									filtresCircuits = append(filtresCircuits, circuit)
 								}
 							}
-							if !piloteAlreadyFound {
-								filtresPilotes = append(filtresPilotes, j)
-							}
 						}
 					}
 				}
 			}
-		} else if queryconst != nil && queryflag != nil && querysaison != nil { // si il y sont tous
-			for _, flag := range queryflag { // drapeaux
-				for _, constructeur := range queryconst { // constructeurs
-					for _, saison := range querysaison { //saisons
-						for _, pilote := range pilotes { // on parcour les pilotes
-							for _, m := range pilote.Saison { // on parcour les saisons du pilotes
-								if strconv.Itoa(m) == saison && flag == pilote.Nationality && constructeur == pilote.ConstructorID {
-									var piloteAlreadyFound bool
-									for _, n := range filtresPilotes {
-										if n.DriverID == pilote.DriverID {
-											piloteAlreadyFound = true
-										}
-									}
-									if !piloteAlreadyFound {
-										filtresPilotes = append(filtresPilotes, pilote)
-									}
-
-								}
-							}
-
-						}
-					}
-				}
-			}
-
 		}
 	}
 
-	filtresPilotes = PaginationPilote(filtresPilotes)
+	filtresCircuits = PaginationCircuits(filtresCircuits)
 	page = 1
-	if filtresPilotes == nil {
+	if filtresCircuits == nil {
 		http.Redirect(w, r, "/circuit/notfound", http.StatusSeeOther)
 	} else {
 		http.Redirect(w, r, "/circuits", http.StatusSeeOther)
 	}
 }
 
+func FiltresConstructeurs(w http.ResponseWriter, r *http.Request) {
+	filtre = true
+	filtresConstructeurs = nil
+	r.ParseForm()
+	queryflag := r.Form["flag"]                 // on récupère tout les filtres drapeaux
+	querysaison := r.Form["saison"]             // on récupère tout les filtres saisons
+	if queryflag == nil && querysaison == nil { // si il n'y en a aucun
+		filtresConstructeurs = constructeurs
+	} else {
+		if queryflag != nil && querysaison == nil { // si ya flag
+			for _, flag := range queryflag {
+				for _, constructeur := range constructeurs {
+					fmt.Println(constructeur.Nationality, Drapeaux(flag))
+					if constructeur.Nationality == Drapeaux(flag) {
+						var constructeurAlreadyFound bool
+						for _, n := range filtresConstructeurs {
+							if n.ConstructorId == constructeur.ConstructorId {
+								constructeurAlreadyFound = true
+							}
+						}
+						if !constructeurAlreadyFound {
+							filtresConstructeurs = append(filtresConstructeurs, constructeur)
+						}
+
+					}
+				}
+			}
+		} else if queryflag == nil && querysaison != nil { // si ya saison
+
+			for _, saison := range querysaison {
+				for _, constructeur := range constructeurs {
+					for _, l := range constructeur.Saisons {
+						if strconv.Itoa(l) == saison {
+							var constructeurAlreadyFound bool
+							for _, n := range filtresConstructeurs {
+								if n.ConstructorId == constructeur.ConstructorId {
+									constructeurAlreadyFound = true
+								}
+							}
+							if !constructeurAlreadyFound {
+								filtresConstructeurs = append(filtresConstructeurs, constructeur)
+							}
+						}
+					}
+
+				}
+			}
+		} else if queryflag != nil && querysaison != nil { // si ya flag + saison
+			for _, flag := range queryflag {
+				for _, saison := range querysaison {
+					for _, constructeur := range constructeurs {
+						for _, l := range constructeur.Saisons {
+							if strconv.Itoa(l) == saison && constructeur.Nationality == Drapeaux(flag) {
+								var constructeurAlreadyFound bool
+								for _, n := range filtresConstructeurs {
+									if n.ConstructorId == constructeur.ConstructorId {
+										constructeurAlreadyFound = true
+									}
+								}
+								if !constructeurAlreadyFound {
+									filtresConstructeurs = append(filtresConstructeurs, constructeur)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	filtresConstructeurs = PaginationConstructeurs(filtresConstructeurs)
+	page = 1
+	if filtresConstructeurs == nil {
+		http.Redirect(w, r, "/constructeur/notfound", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/constructeurs", http.StatusSeeOther)
+	}
+}
+
 func Search(word string, s string) bool {
 	return strings.Contains(strings.ToLower(word), strings.ToLower(s))
+}
+
+func TexteCircuit(circuit backend.Circuit) backend.Circuit {
+	var data []backend.JsonCircuit
+	file, err := os.Open("data.json")
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier JSON :", err)
+		return circuit
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+
+	err = decoder.Decode(&data)
+	if err != nil {
+		fmt.Println("Erreur lors du décodage JSON :", err)
+		return circuit
+	}
+	for _, i := range data {
+		if i.IDCircuit == circuit.IDCircuit {
+			circuit.Texte = i.Texte
+			break
+		}
+	}
+	return circuit
 }

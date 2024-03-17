@@ -211,6 +211,7 @@ type Circuit struct {
 	Ville     string
 	MaxPage   int
 	Seasons   []string
+	Texte     string
 }
 
 type Constructeur struct {
@@ -220,4 +221,10 @@ type Constructeur struct {
 	ConstructorId string
 	Name          string
 	Nationality   string
+	Saisons       []int
+}
+
+type JsonCircuit struct {
+	IDCircuit string `json:"id"`
+	Texte     string `json:"texte"`
 }

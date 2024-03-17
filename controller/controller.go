@@ -12,13 +12,16 @@ import (
 var page = 1
 var pilotes []backend.Pilote
 var circuits []backend.Circuit
+var constructeurs []backend.Constructeur
 
 var filtresPilotes []backend.Pilote
 var filtresCircuits []backend.Circuit
+var filtresConstructeurs []backend.Constructeur
 
 var filtre bool
-var toSendPilotes []backend.Pilote   // liste des pilotes que je vais envoyer
-var toSendCircuits []backend.Circuit // liste des circuits que je vais envoyer
+var toSendPilotes []backend.Pilote             // liste des pilotes que je vais envoyer
+var toSendCircuits []backend.Circuit           // liste des circuits que je vais envoyer
+var toSendConstructeurs []backend.Constructeur // liste des circuits que je vais envoyer
 
 func InitPilotes(w http.ResponseWriter, r *http.Request) { // Requete opti
 	page = 1
@@ -42,6 +45,17 @@ func InitCircuits(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func InitConstructeurs(w http.ResponseWriter, r *http.Request) {
+	page = 1
+	if constructeurs != nil {
+		http.Redirect(w, r, "/constructeurs", http.StatusSeeOther)
+	} else { // sinon on fait la requete
+		constructeurs = Constructeurs()
+		filtre = false
+		http.Redirect(w, r, "/constructeurs", http.StatusSeeOther)
+	}
+}
+
 func NextPagePilote(w http.ResponseWriter, r *http.Request) { // on augmente la page
 	page++
 	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
@@ -60,6 +74,16 @@ func NextPageCircuit(w http.ResponseWriter, r *http.Request) {
 func PreviousPageCircuit(w http.ResponseWriter, r *http.Request) {
 	page--
 	http.Redirect(w, r, "/circuits", http.StatusSeeOther)
+}
+
+func NextPageConstructeur(w http.ResponseWriter, r *http.Request) {
+	page++
+	http.Redirect(w, r, "/constructeurs", http.StatusSeeOther)
+}
+
+func PreviousPageConstructeur(w http.ResponseWriter, r *http.Request) {
+	page--
+	http.Redirect(w, r, "/constructeurs", http.StatusSeeOther)
 }
 
 func DisplayAccueil(w http.ResponseWriter, r *http.Request) { //on affiche l'accueil
@@ -103,12 +127,37 @@ func DisplayCircuits(w http.ResponseWriter, r *http.Request) { // on affiche le 
 				}
 			}
 		}
+	} else {
+		for _, i := range filtresCircuits {
+			if i.PageId == page {
+				toSendCircuits = append(toSendCircuits, i)
+			}
+		}
 	}
 	initTemplate.Temp.ExecuteTemplate(w, "circuits", toSendCircuits)
 }
 
 func DisplayConstructeurs(w http.ResponseWriter, r *http.Request) {
-	initTemplate.Temp.ExecuteTemplate(w, "constructeurs", nil)
+	toSendConstructeurs = nil
+	var constructeursFound int
+	if !filtre {
+		for _, i := range constructeurs {
+			if i.PageId == page {
+				toSendConstructeurs = append(toSendConstructeurs, i)
+				constructeursFound++
+				if constructeursFound == 10 {
+					break
+				}
+			}
+		}
+	} else {
+		for _, i := range filtresConstructeurs {
+			if i.PageId == page {
+				toSendConstructeurs = append(toSendConstructeurs, i)
+			}
+		}
+	}
+	initTemplate.Temp.ExecuteTemplate(w, "constructeurs", toSendConstructeurs)
 }
 
 func DisplayLogin(w http.ResponseWriter, r *http.Request) {
@@ -117,12 +166,17 @@ func DisplayLogin(w http.ResponseWriter, r *http.Request) {
 
 func DisplayPiloteNotFound(w http.ResponseWriter, r *http.Request) {
 	filtresPilotes = pilotes
-	initTemplate.Temp.ExecuteTemplate(w, "pilotenotfound", nil)
+	initTemplate.Temp.ExecuteTemplate(w, "pilote_not_found", nil)
 }
 
 func DisplayCircuitNotFound(w http.ResponseWriter, r *http.Request) {
 	filtresCircuits = circuits
-	initTemplate.Temp.ExecuteTemplate(w, "circuitnotfound", nil)
+	initTemplate.Temp.ExecuteTemplate(w, "circuit_not_found", nil)
+}
+
+func DisplayConstructeurNotFound(w http.ResponseWriter, r *http.Request) {
+	filtresConstructeurs = constructeurs
+	initTemplate.Temp.ExecuteTemplate(w, "constructeur_not_found", nil)
 }
 
 func DisplayPiloteSearch(w http.ResponseWriter, r *http.Request) {
@@ -137,6 +191,13 @@ func DisplayCircuitSearch(w http.ResponseWriter, r *http.Request) {
 	filtresCircuits = SearchCircuit(nomcircuit)
 	filtresCircuits = PaginationCircuits(filtresCircuits)
 	initTemplate.Temp.ExecuteTemplate(w, "circuits", filtresCircuits)
+}
+
+func DisplayConstructeursSearch(w http.ResponseWriter, r *http.Request) {
+	nomconstructeur := r.FormValue("search")
+	filtresConstructeurs = SearchConstructeur(nomconstructeur)
+	filtresConstructeurs = PaginationConstructeurs(filtresConstructeurs)
+	initTemplate.Temp.ExecuteTemplate(w, "constructeurs", filtresConstructeurs)
 }
 
 func InitFavoris(w http.ResponseWriter, r *http.Request) {
@@ -158,4 +219,53 @@ func InitFavoris(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
+}
+
+func DisplayDetailPilote(w http.ResponseWriter, r *http.Request) {
+	var PiloteDetail backend.Pilote
+	toAdd := r.URL.Query().Get("idpilote")
+	for _, i := range pilotes {
+		if i.DriverID == toAdd {
+			PiloteDetail = i
+			break
+		}
+	}
+	initTemplate.Temp.ExecuteTemplate(w, "detail_pilote", PiloteDetail)
+}
+
+func DisplayDetailCircuit(w http.ResponseWriter, r *http.Request) {
+	var CircuitDetail backend.Circuit
+	toAdd := r.URL.Query().Get("idcircuit")
+	for _, i := range circuits {
+		if i.IDCircuit == toAdd {
+			CircuitDetail = i
+			break
+		}
+	}
+	CircuitDetail = TexteCircuit(CircuitDetail)
+	initTemplate.Temp.ExecuteTemplate(w, "detail_circuit", CircuitDetail)
+}
+
+func DisplayDetailConstructeur(w http.ResponseWriter, r *http.Request) {
+	var ConstructeurDetail backend.Constructeur
+	toAdd := r.URL.Query().Get("idconstructeur")
+	for _, i := range constructeurs {
+		if i.ConstructorId == toAdd {
+			ConstructeurDetail = i
+			break
+		}
+	}
+	initTemplate.Temp.ExecuteTemplate(w, "detail_constructeur", ConstructeurDetail)
+}
+
+func BackToCircuits(w http.ResponseWriter, r *http.Request) {
+	initTemplate.Temp.ExecuteTemplate(w, "circuits", toSendCircuits)
+}
+
+func BackToPilotes(w http.ResponseWriter, r *http.Request) {
+	initTemplate.Temp.ExecuteTemplate(w, "circuits", toSendCircuits)
+}
+
+func BackToConstructeurs(w http.ResponseWriter, r *http.Request) {
+	initTemplate.Temp.ExecuteTemplate(w, "circuits", toSendCircuits)
 }

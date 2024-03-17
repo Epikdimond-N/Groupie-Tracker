@@ -1,0 +1,84 @@
+{{define "detail_circuit"}}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/detail_circuit.css" />
+    <link rel="icon" href="/static/img/logo/logo-transparent.png" />
+    <title>{{.Name}}</title>
+  </head>
+  <body>
+    <div class="content-all">
+      <header>
+        <div class="upper-head">
+          <div class="favoris-container">
+            <a href="/favoris">
+              <div class="content-favoris">
+                <img
+                  src="/static/img/logo/logo-favoris.png"
+                  alt="Image Favoris"
+                />
+                <p>Favoris</p>
+              </div>
+            </a>
+          </div>
+          <div class="logo-container">
+            <a href="/accueil">
+              <img class="logo" src="/static/img/logo/logo.png" alt="Logo F1" />
+            </a>
+          </div>
+          <div class="search-log-container">
+            <form action="/pilotes/search">
+              <input type="text" placeholder="Rechercher un pilote" />
+              <button type="submit"></button>
+            </form>
+            <a href="/login">
+              <div class="content-login">
+                <img src="/static/img/logo/login-icon3.png" alt="Image Login" />
+                <p>Login</p>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="lower-head">
+          <a href="/init/pilotes">
+            <p>PILOTES</p>
+          </a>
+          <a href="/init/constructeurs">
+            <p>CONSTRUCTEURS</p>
+          </a>
+          <a class="current" href="/back/circuits">
+            <p>CIRCUITS</p>
+          </a>
+        </div>
+      </header>
+      <section>
+        <div class="circuit">
+          <div class="image-trace">
+            <p>Photo {{.Name}}</p>
+            <img
+              src="/static/img/circuits/{{.IDCircuit}}.jpg"
+              alt="Image {{.Name}}"
+            />
+            <p>Tracé du circuit :</p>
+            <img
+              src="/static/img/trace/{{.IDCircuit}}.png"
+              alt="Tracé {{.Name}}"
+            />
+          </div>
+          <div class="infos-fav">
+            <div class="infos">
+              <h2>{{.Name}}</h2>
+              <p>{{.Texte}}</p>
+            </div>
+            <div class="fav">
+              <button></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
+{{end}}

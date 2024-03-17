@@ -1,0 +1,210 @@
+@font-face {
+  font-family: "F1";
+  src: url(../font/Formula1-Regular-1.ttf) format(truetype);
+}
+
+* {
+  font-family: "F1";
+  margin: 0;
+  padding: 0;
+  --light1: #555566;
+  --light2: #6e6e9e;
+  --light3: #323247;
+  --dark: #14141d;
+  --off-white: #fcfcfc;
+}
+
+.content-all {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--off-white);
+}
+
+header {
+  width: 100%;
+  height: 20%;
+  background-color: var(--dark);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+}
+
+.upper-head {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.lower-head {
+  width: 100%;
+  height: 40%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: var(--light3);
+}
+
+.upper-head a {
+  height: 100%;
+  width: fit-content;
+  text-decoration: none;
+  color: var(--off-white);
+}
+
+.favoris-container,
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 33%;
+  height: 100%;
+}
+
+.search-log-container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 33%;
+}
+
+.search-log-container form {
+  width: fit-content;
+  height: fit-content;
+}
+
+.search-log-container form input,
+.ctn-filtres-search-page form input {
+  padding: 10px;
+  background-color: var(--light1);
+  border-radius: 20px;
+  border: none;
+  color: var(--off-white);
+}
+
+.search-log-container button {
+  display: none;
+}
+
+.content-favoris,
+.content-login {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-favoris img,
+.content-login img {
+  height: 50%;
+}
+
+@media only screen and (max-width: 500px) {
+  .content-favoris img,
+  .content-login img {
+    height: 30%;
+  }
+  .lower-head p {
+    font-size: smaller;
+  }
+}
+
+.logo {
+  height: 80%;
+}
+
+.lower-head a {
+  height: 80%;
+  width: 25%;
+  text-decoration: none;
+  color: var(--off-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current {
+  background-color: var(--light2);
+}
+
+section {
+  position: relative;
+  height: 80%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: url("/static/img/bg/background-circuit-shadow.jpg");
+  background-position: center;
+}
+
+.circuit {
+  width: 80%;
+  height: 80%;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--light3);
+}
+
+.image-trace {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  color: var(--off-white);
+}
+
+.image-trace img {
+  width: 60%;
+  height: auto;
+}
+
+.infos-fav {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--dark);
+}
+
+.infos {
+  width: 100%;
+  height: 80%;
+  background-color: var(--dark);
+}
+
+.infos p {
+  padding-left: 50px;
+  padding-right: 50px;
+  line-height: 2;
+  font-size: 15px;
+}
+
+.infos h2 {
+  padding-left: 50px;
+  padding-top: 50px;
+  padding-bottom: 10px;
+  line-height: 2;
+}
+
+.fav {
+  width: 100%;
+  height: 20%;
+  background-color: var(--dark);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,4 +1,4 @@
-{{define "circuit_not_found"}}
+{{define "constructeur_not_found"}}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -35,22 +35,22 @@
           <a href="/init/pilotes">
             <p>PILOTES</p>
           </a>
-          <a href="/init/constructeurs">
+          <a class="current" href="/init/constructeurs">
             <p>CONSTRUCTEURS</p>
           </a>
-          <a class="current" href="/init/circuits">
+          <a href="/init/circuits">
             <p>CIRCUITS</p>
           </a>
         </div>
       </header>
       <section>
         <div class="not-found">
-          <p>Aucun circuit ne correspond à votre recherche</p>
+          <p>Aucun constructeur ne correspond à votre recherche</p>
           <br /><br /><br />
-          <a href="/init/circuits">Voir tout les circuits</a>
+          <a href="/init/constructeurs">Voir tout les constructeurs</a>
         </div>
       </section>
     </div>
   </body>
 </html>
-{{end}}
+{{ end }}

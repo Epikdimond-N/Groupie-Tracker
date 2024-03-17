@@ -4,10 +4,297 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Constructeur</title>
+    <link rel="stylesheet" href="/static/css/constructeurs.css" />
+    <link rel="icon" href="/static/img/logo/logo-transparent.png" />
+    <title>Constructeurs</title>
   </head>
   <body>
-    
+    <script defer>
+      function DisplayFiltres2() {
+        const stockFiltres = document.getElementById("filtres");
+        stockFiltres.style.visibility = "visible";
+        const stockButtonFiltres = document.getElementById("button-filtres");
+        stockButtonFiltres.style.visibility = "hidden";
+      }
+      function DisplayPasFiltres() {
+        const stockFiltres = document.getElementById("filtres");
+        stockFiltres.style.visibility = "hidden";
+        const stockButtonFiltres = document.getElementById("button-filtres");
+        stockButtonFiltres.style.visibility = "visible";
+      }
+    </script>
+    <div class="content-all">
+      <header>
+        <div class="upper-head">
+          <div class="favoris-container">
+            <a href="/favoris">
+              <div class="content-favoris">
+                <img
+                  src="/static/img/logo/logo-favoris.png"
+                  alt="Image Favoris"
+                />
+                <p>Favoris</p>
+              </div>
+            </a>
+          </div>
+          <div class="logo-container">
+            <a href="/accueil">
+              <img class="logo" src="/static/img/logo/logo.png" alt="Logo F1" />
+            </a>
+          </div>
+          <div class="search-log-container">
+            <form action="/pilotes/search">
+              <input type="text" placeholder="Rechercher un pilote" />
+              <button type="submit"></button>
+            </form>
+            <a href="/login">
+              <div class="content-login">
+                <img src="/static/img/logo/login-icon3.png" alt="Image Login" />
+                <p>Login</p>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="lower-head">
+          <a href="/init/pilotes">
+            <p>PILOTES</p>
+          </a>
+          <a class="current" href="/init/constructeurs">
+            <p>CONSTRUCTEURS</p>
+          </a>
+          <a href="/init/circuits">
+            <p>CIRCUITS</p>
+          </a>
+        </div>
+      </header>
+      <section>
+        <div class="ctn-filtres-search-page">
+          <button onclick="DisplayFiltres2()" id="button-filtres">
+            FILTRES
+          </button>
+          <form action="/search/constructeurs" method="post">
+            <input
+              name="search"
+              type="text"
+              placeholder="Rechercher un constructeur"
+            />
+            <button type="submit"></button>
+          </form>
+
+          <p class="num-page">
+            PAGE {{range .}}{{.PageId}} / {{.MaxPage}} {{break}} {{end}}
+          </p>
+        </div>
+        <div class="filtres" id="filtres">
+          <form
+            class="form-filtres"
+            action="/filtres/constructeurs"
+            method="post"
+          >
+            <div class="filtres-container">
+              <div class="filtres-1">
+                <label class="label-flag">
+                  <input type="checkbox" value="British" name="flag" />
+                  <p class="img-unchecked">UK</p>
+                  <img class="img-checked" src="/static/img/drapeaux/UK.png" />
+                </label>
+
+                <label class="label-flag">
+                  <input type="checkbox" value="Spanish" name="flag" />
+                  <p class="img-unchecked">Spain</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Spain.png"
+                  />
+                </label>
+
+                <label class="label-flag">
+                  <input type="checkbox" value="French" name="flag" />
+                  <p class="img-unchecked">France</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/France.png"
+                  />
+                </label>
+
+                <label class="label-flag">
+                  <input type="checkbox" value="German" name="flag" />
+                  <p class="img-unchecked">Germany</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Germany.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="American" name="flag" />
+                  <p class="img-unchecked">USA</p>
+                  <img class="img-checked" src="/static/img/drapeaux/USA.png" />
+                </label>
+
+                <label class="label-flag">
+                  <input type="checkbox" value="Indian" name="flag" />
+                  <p class="img-unchecked">India</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/India.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Italian" name="flag" />
+                  <p class="img-unchecked">Italy</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Italy.png"
+                  />
+                </label>
+
+                <label class="label-flag">
+                  <input type="checkbox" value="Russian" name="flag" />
+                  <p class="img-unchecked">Russia</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Russia.png"
+                  />
+                </label>
+
+                <label class="label-flag">
+                  <input type="checkbox" value="Swiss" name="flag" />
+                  <p class="img-unchecked">Switzerland</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Switzerland.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Austrian" name="flag" />
+                  <p class="img-unchecked">Austria</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Austria.png"
+                  />
+                </label>
+                <label class="label-flag">
+                  <input type="checkbox" value="Malaysian" name="flag" />
+                  <p class="img-unchecked">Malaysia</p>
+                  <img
+                    class="img-checked"
+                    src="/static/img/drapeaux/Malaysia.png"
+                  />
+                </label>
+              </div>
+              <div class="filtres-2">
+                <label class="label-saison">
+                  <input type="checkbox" value="2011" name="saison" />
+                  <p class="img-unchecked">2011</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2012" name="saison" />
+                  <p class="img-unchecked">2012</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2013" name="saison" />
+                  <p class="img-unchecked">2013</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2014" name="saison" />
+                  <p class="img-unchecked">2014</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2015" name="saison" />
+                  <p class="img-unchecked">2015</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2016" name="saison" />
+                  <p class="img-unchecked">2016</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2017" name="saison" />
+                  <p class="img-unchecked">2017</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2018" name="saison" />
+                  <p class="img-unchecked">2018</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2019" name="saison" />
+                  <p class="img-unchecked">2019</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2020" name="saison" />
+                  <p class="img-unchecked">2020</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2021" name="saison" />
+                  <p class="img-unchecked">2021</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2022" name="saison" />
+                  <p class="img-unchecked">2022</p>
+                </label>
+                <label class="label-saison">
+                  <input type="checkbox" value="2023" name="saison" />
+                  <p class="img-unchecked">2023</p>
+                </label>
+              </div>
+            </div>
+            <div class="confirm-filtres">
+              <button type="submit" id="filtres" onclick="DisplayPasFiltres()">
+                CONFIRM
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="liste-items">
+          {{range .}}
+          <div class="card">
+            <div class="img-container">
+              <img
+                src="/static/img/constructeurs-png/{{.ConstructorId}}.png"
+                alt="Image {{.Name}}"
+              />
+            </div>
+
+            <div class="infos">
+              <div class="infos-top">
+                <img
+                  src="/static/img/drapeaux/{{.Nationality}}.png"
+                  alt="Drapeau {{.Nationality}}"
+                />
+                <p>{{.Name}}</p>
+              </div>
+              <div class="infos-bottom"></div>
+            </div>
+          </div>
+          {{end}}
+        </div>
+        <div class="pagination">
+          {{range .}} {{if eq .MaxPage 1}} {{break}} {{else if eq .PageId 1}}
+          <a href="/next/constructeurs">
+            <div class="next">
+              <p>NEXT</p>
+            </div></a
+          >
+          {{break}} {{else if eq .PageId .MaxPage}}
+          <a href="/previous/constructeurs">
+            <div class="previous">
+              <p>PREVIOUS</p>
+            </div>
+          </a>
+          {{break}} {{else}}
+          <a href="/previous/constructeurs">
+            <div class="previous">
+              <p>PREVIOUS</p>
+            </div>
+          </a>
+          <a href="/next/constructeurs">
+            <div class="next">
+              <p>NEXT</p>
+            </div></a
+          >
+          {{break}} {{end}} {{end}}
+        </div>
+      </section>
+    </div>
   </body>
 </html>
 {{end}}

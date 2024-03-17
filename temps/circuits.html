@@ -91,10 +91,10 @@
               <div class="filtres-1">
                 <label class="label-flag">
                   <input type="checkbox" value="Dutch" name="flag" />
-                  <p class="img-unchecked">Netherland</p>
+                  <p class="img-unchecked">Netherlands</p>
                   <img
                     class="img-checked"
-                    src="/static/img/drapeaux/Netherland.png"
+                    src="/static/img/drapeaux/Netherlands.png"
                   />
                 </label>
                 <label class="label-flag">
@@ -544,35 +544,34 @@
         </div>
         <div class="liste-items">
           {{range .}}
-          <div class="card">
-            <div class="img-container">
-              <img
-                src="/static/img/circuits/{{.IDCircuit}}.jpg"
-                alt="Image {{.Name}}"
-              />
-            </div>
-
-            <div class="infos">
-              <div class="infos-top">
+          <form
+            class="form_detail"
+            action="/detail/circuit?idcircuit={{.IDCircuit}}"
+            method="post"
+          >
+            <button class="card">
+              <div class="img-container">
                 <img
-                  src="/static/img/drapeaux/{{.Pays}}.png"
-                  alt="Drapeau {{.Pays}}"
+                  src="/static/img/circuits/{{.IDCircuit}}.jpg"
+                  alt="Image {{.Name}}"
                 />
-                <p>{{.Name}}</p>
-              </div>
-              <div class="infos-bottom">
-                <p>{{.GPName}}</p>
               </div>
 
-              <!-- <form
-                class="favoris"
-                action="/action/pilote_to_favoris?id={{.IDCircuit}}"
-                method="post"
-              >
-                <button type="submit"></button>
-              </form> -->
-            </div>
-          </div>
+              <div class="infos">
+                <div class="infos-top">
+                  <img
+                    src="/static/img/drapeaux/{{.Pays}}.png"
+                    alt="Drapeau {{.Pays}}"
+                  />
+                  <p>{{.Name}}</p>
+                </div>
+                <div class="infos-bottom">
+                  <p>{{.GPName}}</p>
+                </div>
+              </div>
+            </button>
+          </form>
+
           {{end}}
         </div>
         <div class="pagination">
