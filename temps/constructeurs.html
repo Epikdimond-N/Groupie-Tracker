@@ -246,25 +246,31 @@
         </div>
         <div class="liste-items">
           {{range .}}
-          <div class="card">
-            <div class="img-container">
-              <img
-                src="/static/img/constructeurs-png/{{.ConstructorId}}.png"
-                alt="Image {{.Name}}"
-              />
-            </div>
-
-            <div class="infos">
-              <div class="infos-top">
+          <form
+            class="form_detail"
+            action="/detail/constructeur?idconstructeur={{.ConstructorId}}"
+            method="post"
+          >
+            <button class="card">
+              <div class="img-container">
                 <img
-                  src="/static/img/drapeaux/{{.Nationality}}.png"
-                  alt="Drapeau {{.Nationality}}"
+                  src="/static/img/constructeurs-png/{{.ConstructorId}}.png"
+                  alt="Image {{.Name}}"
                 />
-                <p>{{.Name}}</p>
               </div>
-              <div class="infos-bottom"></div>
-            </div>
-          </div>
+
+              <div class="infos">
+                <div class="infos-top">
+                  <img
+                    src="/static/img/drapeaux/{{.Nationality}}.png"
+                    alt="Drapeau {{.Nationality}}"
+                  />
+                  <p>{{.Name}}</p>
+                </div>
+                <div class="infos-bottom"></div>
+              </div>
+            </button>
+          </form>
           {{end}}
         </div>
         <div class="pagination">

@@ -140,7 +140,7 @@ func Textify() {
 	listpilotes := Pilotes()
 
 	// Ouvrir le fichier en écriture
-	file, err := os.Create("nationality.txt")
+	file, err := os.Create("ids.txt")
 	if err != nil {
 		fmt.Println("Erreur lors de la création du fichier:", err)
 		return
@@ -149,7 +149,7 @@ func Textify() {
 
 	// Parcourir la liste de pilotes et écrire les ID dans le fichier
 	for _, pilote := range listpilotes {
-		_, err := file.WriteString(pilote.Nationality + "\n")
+		_, err := file.WriteString("{\n\"id\":\"" + pilote.DriverID + "\",\n\"texte\":\"\"\n},\n")
 		if err != nil {
 			fmt.Println("Erreur lors de l'écriture dans le fichier:", err)
 			return
@@ -689,7 +689,7 @@ func Search(word string, s string) bool {
 
 func TexteCircuit(circuit backend.Circuit) backend.Circuit {
 	var data []backend.JsonCircuit
-	file, err := os.Open("data.json")
+	file, err := os.Open("data_circuits.json")
 	if err != nil {
 		fmt.Println("Erreur lors de l'ouverture du fichier JSON :", err)
 		return circuit
@@ -710,4 +710,54 @@ func TexteCircuit(circuit backend.Circuit) backend.Circuit {
 		}
 	}
 	return circuit
+}
+
+func TextePilote(pilote backend.Pilote) backend.Pilote {
+	var data []backend.JsonPilote
+	file, err := os.Open("data_pilotes.json")
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier JSON :", err)
+		return pilote
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+
+	err = decoder.Decode(&data)
+	if err != nil {
+		fmt.Println("Erreur lors du décodage JSON :", err)
+		return pilote
+	}
+	for _, i := range data {
+		if i.DriverID == pilote.DriverID {
+			pilote.Texte = i.Texte
+			break
+		}
+	}
+	return pilote
+}
+
+func TexteConstructeur(constructeur backend.Constructeur) backend.Constructeur {
+	var data []backend.JsonConstructeur
+	file, err := os.Open("data_constructeurs.json")
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier JSON :", err)
+		return constructeur
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+
+	err = decoder.Decode(&data)
+	if err != nil {
+		fmt.Println("Erreur lors du décodage JSON :", err)
+		return constructeur
+	}
+	for _, i := range data {
+		if i.ConstructorId == constructeur.ConstructorId {
+			constructeur.Texte = i.Texte
+			break
+		}
+	}
+	return constructeur
 }

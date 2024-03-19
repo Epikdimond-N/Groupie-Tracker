@@ -314,7 +314,7 @@
                   <p class="img-unchecked">Netherland</p>
                   <img
                     class="img-checked"
-                    src="/static/img/drapeaux/Netherland.png"
+                    src="/static/img/drapeaux/Netherlands.png"
                   />
                 </label>
                 <label class="label-flag">
@@ -581,32 +581,38 @@
         </div>
         <div class="liste-pilotes">
           {{range .}}
-          <div class="card">
-            <img
-              src="/static/img/pilotes-png/{{.DriverID}}.png"
-              alt="Image {{.Name}} {{.FamilyName}}"
-            />
+          <form
+            class="form_detail"
+            action="/detail/pilote?idpilote={{.DriverID}}"
+            method="post"
+          >
+            <button class="card">
+              <img
+                src="/static/img/pilotes-png/{{.DriverID}}.png"
+                alt="Image {{.Name}} {{.FamilyName}}"
+              />
 
-            <div class="infos">
-              <div class="num-flag-nom">
-                <div class="num-flag">
-                  <p>#{{.Number}}</p>
+              <div class="infos">
+                <div class="num-flag-nom">
+                  <div class="num-flag">
+                    <p>#{{.Number}}</p>
+                    <img
+                      src="/static/img/drapeaux/{{.Flag}}.png"
+                      alt="{{.Flag}} flag"
+                    />
+                  </div>
+                  <span></span>
+                  <p>{{.Name}} {{.FamilyName}}</p>
+                </div>
+                <div class="constructeur">
                   <img
-                    src="/static/img/drapeaux/{{.Flag}}.png"
-                    alt="{{.Flag}} flag"
+                    src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
+                    alt="Image {{.Constructor}}"
                   />
                 </div>
-                <span></span>
-                <p>{{.Name}} {{.FamilyName}}</p>
               </div>
-              <div class="constructeur">
-                <img
-                  src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
-                  alt="Image {{.Constructor}}"
-                />
-              </div>
-            </div>
-          </div>
+            </button>
+          </form>
           {{end}}
         </div>
         <div class="pagination">

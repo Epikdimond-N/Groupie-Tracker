@@ -200,6 +200,7 @@ type Pilote struct {
 	ConstructorID string
 	MaxPage       int
 	Saison        []int
+	Texte         string
 }
 
 type Circuit struct {
@@ -222,9 +223,20 @@ type Constructeur struct {
 	Name          string
 	Nationality   string
 	Saisons       []int
+	Texte         string
 }
 
 type JsonCircuit struct {
 	IDCircuit string `json:"id"`
 	Texte     string `json:"texte"`
+}
+
+type JsonPilote struct {
+	DriverID string `json:"id"`
+	Texte    string `json:"texte"`
+}
+
+type JsonConstructeur struct {
+	ConstructorId string `json:"id"`
+	Texte         string `json:"texte"`
 }

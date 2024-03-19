@@ -329,9 +329,14 @@ label input:checked ~ .img-unchecked {
   justify-content: space-evenly;
 }
 
-.card {
+.form_detail {
   width: 18%;
   height: 45%;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -369,6 +374,7 @@ label input:checked ~ .img-unchecked {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  color: var(--off-white);
 }
 
 .infos-bottom {
@@ -379,6 +385,7 @@ label input:checked ~ .img-unchecked {
   align-items: flex-start;
   justify-content: center;
   padding-top: 10px;
+  color: var(--off-white);
 }
 
 .infos-top p,

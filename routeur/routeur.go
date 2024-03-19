@@ -8,6 +8,7 @@ import (
 )
 
 func InitServe() {
+
 	http.HandleFunc("/next/pilotes", controller.NextPagePilote) // routes pour changer de pages dans pilotes, circuits et constructeurs
 	http.HandleFunc("/previous/pilotes", controller.PreviousPagePilote)
 	http.HandleFunc("/next/circuits", controller.NextPageCircuit)
@@ -41,13 +42,15 @@ func InitServe() {
 
 	http.HandleFunc("/detail/pilote", controller.DisplayDetailPilote) // route sur lesquelles les templates detail de chaques catégories vont etres affichées
 	http.HandleFunc("/detail/circuit", controller.DisplayDetailCircuit)
-	http.HandleFunc("/detail/constructeurs", controller.DisplayDetailConstructeur)
+	http.HandleFunc("/detail/constructeur", controller.DisplayDetailConstructeur)
 
-	http.HandleFunc("/back/pilotes", controller.BackToCircuits) // routes qui va servir a retourner en arrire quand on est sur
-	http.HandleFunc("/back/circuits", controller.BackToPilotes) // un template detail sans changer la page sur laquelle on se trouvait précedemment
+	http.HandleFunc("/back/pilotes", controller.BackToPilotes)   // routes qui va servir a retourner en arrire quand on est sur
+	http.HandleFunc("/back/circuits", controller.BackToCircuits) // un template detail sans changer la page sur laquelle on se trouvait précedemment
 	http.HandleFunc("/back/constructeurs", controller.BackToConstructeurs)
 
-	http.HandleFunc("/action/pilote_to_favoris", controller.InitFavoris)
+	http.HandleFunc("/add/pilote_to_favoris", controller.AddPiloteToFavoris)
+	http.HandleFunc("/add/circuit_to_favoris", controller.AddCircuitToFavoris)
+	http.HandleFunc("/add/constructeur_to_favoris", controller.AddConstructeurToFavoris)
 
 	rootDoc, _ := os.Getwd()
 	fileserver := http.FileServer(http.Dir(rootDoc + "/assets"))

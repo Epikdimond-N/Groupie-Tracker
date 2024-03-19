@@ -384,9 +384,14 @@ label input:checked ~ .img-unchecked {
   align-items: center;
   justify-content: space-evenly;
 }
-.card {
+
+.form_detail {
   width: 18%;
   height: 45%;
+}
+.card {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -406,6 +411,7 @@ label input:checked ~ .img-unchecked {
   justify-content: center;
 }
 .num-flag-nom {
+  color: var(--off-white);
   width: 100%;
   height: 30%;
   display: flex;

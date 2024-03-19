@@ -1,4 +1,4 @@
-{{define "detail_circuit"}}
+{{define "detail_pilote"}}
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -42,39 +42,39 @@
           </div>
         </div>
         <div class="lower-head">
-          <a href="/init/pilotes">
+          <a class="current" href="/back/pilotes">
             <p>PILOTES</p>
           </a>
           <a href="/init/constructeurs">
             <p>CONSTRUCTEURS</p>
           </a>
-          <a class="current" href="/back/circuits">
+          <a href="/init/circuits">
             <p>CIRCUITS</p>
           </a>
         </div>
       </header>
-      <section class="section_circuit">
+      <section class="section_pilote">
         <div class="circuit">
           <div class="image-trace">
             <p>Photo {{.Name}}</p>
             <img
-              src="/static/img/circuits/{{.IDCircuit}}.jpg"
+              src="/static/img/pilotes-png/{{.DriverID}}.png"
               alt="Image {{.Name}}"
             />
-            <p>Tracé du circuit :</p>
+            <p>Constructeur</p>
             <img
-              src="/static/img/trace/{{.IDCircuit}}.png"
-              alt="Tracé {{.Name}}"
+              src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
+              alt="Image {{.Constructor}}"
             />
           </div>
           <div class="infos-fav">
             <div class="infos">
-              <h2>{{.Name}}</h2>
+              <h2>{{.Name}} {{.FamilyName}}</h2>
               <p>{{.Texte}}</p>
             </div>
             <div class="fav">
               <form
-                action="/add/circuit_to_favoris?idcircuit={{.IDCircuit}}"
+                action="/add/pilote_to_favoris?idpilote={{.DriverID}}"
                 method="post"
               >
                 <button type="submit">Ajouter {{.Name}} aux favoris</button>
