@@ -73,12 +73,25 @@
               <p>{{.Texte}}</p>
             </div>
             <div class="fav">
+              {{if .InFav}}
+              <form
+                action="/remove/circuit_of_favoris?idcircuit={{.IDCircuit}}"
+                method="post"
+              >
+                <button type="submit" class="remove-button">
+                  Enlever {{.Name}} des favoris
+                </button>
+              </form>
+              {{else}}
               <form
                 action="/add/circuit_to_favoris?idcircuit={{.IDCircuit}}"
                 method="post"
               >
-                <button type="submit">Ajouter {{.Name}} aux favoris</button>
+                <button type="submit" class="add-button">
+                  Ajouter {{.Name}} aux favoris
+                </button>
               </form>
+              {{end}}
             </div>
           </div>
         </div>

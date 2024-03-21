@@ -137,10 +137,10 @@ func Drapeaux(nationality string) string {
 }
 
 func Textify() {
-	listpilotes := Pilotes()
+	listconsts := Constructeurs()
 
 	// Ouvrir le fichier en écriture
-	file, err := os.Create("ids.txt")
+	file, err := os.Create("ids-const.txt")
 	if err != nil {
 		fmt.Println("Erreur lors de la création du fichier:", err)
 		return
@@ -148,8 +148,8 @@ func Textify() {
 	defer file.Close()
 
 	// Parcourir la liste de pilotes et écrire les ID dans le fichier
-	for _, pilote := range listpilotes {
-		_, err := file.WriteString("{\n\"id\":\"" + pilote.DriverID + "\",\n\"texte\":\"\"\n},\n")
+	for _, constru := range listconsts {
+		_, err := file.WriteString("{\n\"id\":\"" + constru.ConstructorId + "\",\n\"texte\":\"\"\n},\n")
 		if err != nil {
 			fmt.Println("Erreur lors de l'écriture dans le fichier:", err)
 			return
@@ -760,4 +760,267 @@ func TexteConstructeur(constructeur backend.Constructeur) backend.Constructeur {
 		}
 	}
 	return constructeur
+}
+
+func AddCircuitToFavoris(w http.ResponseWriter, r *http.Request) {
+	var circuitToAdd backend.Circuit
+	toAdd := r.URL.Query().Get("idcircuit")
+
+	for index, i := range circuits {
+		if i.IDCircuit == toAdd {
+			circuitToAdd = i
+			circuits[index].InFav = true
+			break
+		}
+	}
+
+	fichier, err := os.OpenFile("fav_circuits.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
+		return
+	}
+	defer fichier.Close()
+
+	if err := json.NewDecoder(fichier).Decode(&toSendFavoris.FavCircuits); err != nil && err.Error() != "EOF" {
+		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
+		return
+	}
+	circuitToAdd = TexteCircuit(circuitToAdd)
+	circuitToAdd.InFav = true
+	toSendFavoris.FavCircuits = append(toSendFavoris.FavCircuits, circuitToAdd)
+
+	updatedJSON, err := json.MarshalIndent(toSendFavoris.FavCircuits, "", "  ")
+	if err != nil {
+		fmt.Println("il y a une erreur", err)
+		return
+	}
+
+	err = os.WriteFile("fav_circuits.json", updatedJSON, 0644)
+	if err != nil {
+		fmt.Println("il y a une erreur", err)
+		return
+	}
+	toSendFavoris.CircuitEmpty = false
+	http.Redirect(w, r, "/circuits", http.StatusSeeOther)
+}
+
+func AddPiloteToFavoris(w http.ResponseWriter, r *http.Request) {
+	var piloteToAdd backend.Pilote
+	toAdd := r.URL.Query().Get("idpilote")
+
+	for index, i := range pilotes {
+		if i.DriverID == toAdd {
+			piloteToAdd = i
+			pilotes[index].InFav = true
+			break
+		}
+	}
+
+	fichier, err := os.OpenFile("fav_pilotes.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
+		return
+	}
+	defer fichier.Close()
+
+	if err := json.NewDecoder(fichier).Decode(&toSendFavoris.FavPilotes); err != nil && err.Error() != "EOF" {
+		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
+		return
+	}
+	piloteToAdd = TextePilote(piloteToAdd)
+	piloteToAdd.InFav = true
+	toSendFavoris.FavPilotes = append(toSendFavoris.FavPilotes, piloteToAdd)
+
+	updatedJSON, err := json.MarshalIndent(toSendFavoris.FavPilotes, "", "  ")
+	if err != nil {
+		fmt.Println("Il y a une erreur", err)
+		return
+	}
+
+	err = os.WriteFile("fav_pilotes.json", updatedJSON, 0644)
+	if err != nil {
+		fmt.Println("Il y a une erreur", err)
+		return
+	}
+	toSendFavoris.PiloteEmpty = false
+	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
+}
+
+func AddConstructeurToFavoris(w http.ResponseWriter, r *http.Request) {
+	var constructeurToAdd backend.Constructeur
+	toAdd := r.URL.Query().Get("idconstructeur")
+	for index, i := range constructeurs {
+		if i.ConstructorId == toAdd {
+			constructeurToAdd = i
+			constructeurs[index].InFav = true
+			break
+		}
+	}
+
+	fichier, err := os.OpenFile("fav_constructeurs.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
+		return
+	}
+	defer fichier.Close()
+
+	if err := json.NewDecoder(fichier).Decode(&toSendFavoris.FavConstructeurs); err != nil && err.Error() != "EOF" {
+		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
+		return
+	}
+	constructeurToAdd = TexteConstructeur(constructeurToAdd)
+	constructeurToAdd.InFav = true
+	toSendFavoris.FavConstructeurs = append(toSendFavoris.FavConstructeurs, constructeurToAdd)
+
+	updatedJSON, err := json.MarshalIndent(toSendFavoris.FavConstructeurs, "", "  ")
+	if err != nil {
+		fmt.Println("il y a une erreur", err)
+		return
+	}
+
+	err = os.WriteFile("fav_constructeurs.json", updatedJSON, 0644)
+	if err != nil {
+		fmt.Println("il y a une erreur", err)
+		return
+	}
+	toSendFavoris.ConstructeurEmpty = false
+	http.Redirect(w, r, "/constructeurs", http.StatusSeeOther)
+}
+
+func RemoveCircuitOfFavoris(w http.ResponseWriter, r *http.Request) {
+	toRem := r.URL.Query().Get("idcircuit")
+
+	index := -1
+
+	fichier, err := os.OpenFile("fav_circuits.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
+		return
+	}
+	defer fichier.Close()
+
+	if err := json.NewDecoder(fichier).Decode(&toSendFavoris.FavCircuits); err != nil && err.Error() != "EOF" {
+		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
+		return
+	}
+
+	for i, circuit := range toSendFavoris.FavCircuits {
+		if circuit.IDCircuit == toRem {
+			index = i
+			break
+		}
+	}
+	if index != -1 {
+		toSendFavoris.FavCircuits = append(toSendFavoris.FavCircuits[:index], toSendFavoris.FavCircuits[index+1:]...)
+
+	} else {
+		fmt.Errorf("Item with ID %d not found", toRem)
+		return
+	}
+
+	if len(toSendFavoris.FavCircuits) < 1 {
+		toSendFavoris.CircuitEmpty = true
+	}
+
+	updatedData, err := json.MarshalIndent(toSendFavoris.FavCircuits, "", "    ")
+	if err != nil {
+		return
+	}
+
+	// Écrire les données mises à jour dans le fichier
+	if err := os.WriteFile("fav_circuits.json", updatedData, 0644); err != nil {
+		return
+	}
+	http.Redirect(w, r, "/favoris", http.StatusSeeOther)
+}
+
+func RemovePiloteOfFavoris(w http.ResponseWriter, r *http.Request) {
+	toRem := r.URL.Query().Get("idpilote")
+	index := -1
+
+	fichier, err := os.OpenFile("fav_pilotes.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
+		return
+	}
+	defer fichier.Close()
+
+	if err := json.NewDecoder(fichier).Decode(&toSendFavoris.FavPilotes); err != nil && err.Error() != "EOF" {
+		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
+		return
+	}
+
+	for i, pilote := range toSendFavoris.FavPilotes {
+		if pilote.DriverID == toRem {
+			index = i
+			break
+		}
+	}
+	if index != -1 {
+		toSendFavoris.FavPilotes = append(toSendFavoris.FavPilotes[:index], toSendFavoris.FavPilotes[index+1:]...)
+
+	} else {
+		fmt.Errorf("Item with ID %d not found", toRem)
+		return
+	}
+
+	if len(toSendFavoris.FavPilotes) < 1 {
+		toSendFavoris.PiloteEmpty = true
+	}
+
+	updatedData, err := json.MarshalIndent(toSendFavoris.FavPilotes, "", "    ")
+	if err != nil {
+		return
+	}
+
+	if err := os.WriteFile("fav_pilotes.json", updatedData, 0644); err != nil {
+		return
+	}
+	http.Redirect(w, r, "/favoris", http.StatusSeeOther)
+}
+
+func RemoveConstructorOfFavoris(w http.ResponseWriter, r *http.Request) {
+	toRem := r.URL.Query().Get("idconstructeur")
+
+	index := -1
+
+	fichier, err := os.OpenFile("fav_constructeur.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
+		return
+	}
+	defer fichier.Close()
+
+	if err := json.NewDecoder(fichier).Decode(&toSendFavoris.FavConstructeurs); err != nil && err.Error() != "EOF" {
+		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
+		return
+	}
+
+	for i, constructeur := range toSendFavoris.FavConstructeurs {
+		if constructeur.ConstructorId == toRem {
+			index = i
+			break
+		}
+	}
+	if index != -1 {
+		toSendFavoris.FavConstructeurs = append(toSendFavoris.FavConstructeurs[:index], toSendFavoris.FavConstructeurs[index+1:]...)
+
+	} else {
+		fmt.Errorf("Item with ID %d not found", toRem)
+		return
+	}
+
+	if len(toSendFavoris.FavConstructeurs) < 1 {
+		toSendFavoris.ConstructeurEmpty = true
+	}
+
+	updatedData, err := json.MarshalIndent(toSendFavoris.FavConstructeurs, "", "    ")
+	if err != nil {
+		return
+	}
+
+	if err := os.WriteFile("fav_constructeurs.json", updatedData, 0644); err != nil {
+		return
+	}
+	http.Redirect(w, r, "/favoris", http.StatusSeeOther)
 }

@@ -56,15 +56,15 @@
       <section class="section_constructeur">
         <div class="circuit">
           <div class="image-trace">
-            <p>Photo {{.Name}}</p>
+            <p>Logo {{.Name}}</p>
             <img
               src="/static/img/constructeurs-png/{{.ConstructorId}}.png"
               alt="Image {{.Name}}"
             />
-            <p>Constructeur</p>
+            <p>Photo F1 :</p>
             <img
-              src="/static/img/constructeurs-png/{{.ConstructorId}}.png"
-              alt="Image {{.Name}}"
+              src="/static/img/voitures/{{.ConstructorId}}.jpg"
+              alt="Image voiture {{.Name}}"
             />
           </div>
           <div class="infos-fav">
@@ -73,12 +73,25 @@
               <p>{{.Texte}}</p>
             </div>
             <div class="fav">
+              {{if .InFav}}
+              <form
+                action="/remove/constructeur_of_favoris?idconstructeur={{.ConstructorId}}"
+                method="post"
+              >
+                <button type="submit" class="remove-button">
+                  Enlever {{.Name}} des favoris
+                </button>
+              </form>
+              {{else}}
               <form
                 action="/add/constructeur_to_favoris?idconstructeur={{.ConstructorId}}"
                 method="post"
               >
-                <button type="submit">Ajouter {{.Name}} aux favoris</button>
+                <button type="submit" class="add-button">
+                  Ajouter {{.Name}} aux favoris
+                </button>
               </form>
+              {{end}}
             </div>
           </div>
         </div>

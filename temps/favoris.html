@@ -1,0 +1,166 @@
+{{define "favoris"}}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/favoris.css" />
+    <link rel="icon" href="/static/img/logo/logo-transparent.png" />
+    <title>Favoris</title>
+  </head>
+  <body>
+    <div class="content-all">
+      <header>
+        <div class="upper-head">
+          <div class="favoris-container">
+            <a href="/favoris">
+              <div class="content-favoris current">
+                <img
+                  src="/static/img/logo/logo-favoris.png"
+                  alt="Image Favoris"
+                />
+                <p>Favoris</p>
+              </div>
+            </a>
+          </div>
+          <div class="logo-container">
+            <a href="/accueil">
+              <img class="logo" src="/static/img/logo/logo.png" alt="Logo F1" />
+            </a>
+          </div>
+          <div class="search-log-container">
+            <form action="/pilotes/search">
+              <input type="text" placeholder="Rechercher un pilote" />
+              <button type="submit"></button>
+            </form>
+            <!-- <a href="/login">
+              <div class="content-login">
+                <img src="/static/img/logo/login-icon3.png" alt="Image Login" />
+                <p>Login</p>
+              </div>
+            </a> -->
+          </div>
+        </div>
+        <div class="lower-head">
+          <a href="/init/pilotes">
+            <p>PILOTES</p>
+          </a>
+          <a href="/init/constructeurs">
+            <p>CONSTRUCTEURS</p>
+          </a>
+          <a href="/init/circuits">
+            <p>CIRCUITS</p>
+          </a>
+        </div>
+      </header>
+      <section class="section_pilote">
+        <p>Pilotes Favoris :</p>
+        <div class="categories pilotes">
+          {{if .PiloteEmpty}}
+          <p>Vous n'avez aucun pilotes en favoris</p>
+          {{else}} {{range .FavPilotes}}
+          <form
+            class="form_detail"
+            action="/detail/pilote?idpilote={{.DriverID}}"
+            method="post"
+          >
+            <button class="pilote_card">
+              <img
+                src="/static/img/pilotes-png/{{.DriverID}}.png"
+                alt="Image {{.Name}} {{.FamilyName}}"
+              />
+
+              <div class="pilote_infos">
+                <div class="pilote_num-flag-nom">
+                  <div class="pilote_num-flag">
+                    <p>#{{.Number}}</p>
+                    <img
+                      src="/static/img/drapeaux/{{.Flag}}.png"
+                      alt="{{.Flag}} flag"
+                    />
+                  </div>
+                  <span></span>
+                  <p>{{.Name}} {{.FamilyName}}</p>
+                </div>
+                <div class="pilote_constructeur">
+                  <img
+                    src="/static/img/constructeurs-png/{{.ConstructorID}}.png"
+                    alt="Image {{.Constructor}}"
+                  />
+                </div>
+              </div>
+            </button>
+          </form>
+          {{end}} {{end}}
+        </div>
+        <p>Constructeurs Favoris :</p>
+        <div class="categories constructeurs">
+          {{if .ConstructeurEmpty}}
+          <p>Vous n'avez aucun constructeur en favoris</p>
+          {{else}} {{range .FavConstructeurs}}
+          <form
+            class="form_detail"
+            action="/detail/constructeur?idconstructeur={{.ConstructorId}}"
+            method="post"
+          >
+            <button class="constructeur_card">
+              <div class="constructeur_img-container">
+                <img
+                  src="/static/img/constructeurs-png/{{.ConstructorId}}.png"
+                  alt="Image {{.Name}}"
+                />
+              </div>
+
+              <div class="constructeur_infos">
+                <div class="constructeur_infos-top">
+                  <img
+                    src="/static/img/drapeaux/{{.Nationality}}.png"
+                    alt="Drapeau {{.Nationality}}"
+                  />
+                  <p>{{.Name}}</p>
+                </div>
+                <div class="constructeur_infos-bottom"></div>
+              </div>
+            </button>
+          </form>
+          {{end}} {{end}}
+        </div>
+        <p>Circuits Favoris :</p>
+        <div class="categories circuits">
+          {{if .CircuitEmpty}}
+          <p>Vous n'avez aucun circuits en favoris</p>
+          {{else}} {{range .FavCircuits}}
+          <form
+            class="form_detail"
+            action="/detail/circuit?idcircuit={{.IDCircuit}}"
+            method="post"
+          >
+            <button class="circuit_card">
+              <div class="circuit_img-container">
+                <img
+                  src="/static/img/circuits/{{.IDCircuit}}.jpg"
+                  alt="Image {{.Name}}"
+                />
+              </div>
+
+              <div class="circuit_infos">
+                <div class="circuit_infos-top">
+                  <img
+                    src="/static/img/drapeaux/{{.Pays}}.png"
+                    alt="Drapeau {{.Pays}}"
+                  />
+                  <p>{{.Name}}</p>
+                </div>
+                <div class="circuit_infos-bottom">
+                  <p>{{.GPName}}</p>
+                </div>
+              </div>
+            </button>
+          </form>
+          {{end}} {{end}}
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
+{{end}}

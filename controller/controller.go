@@ -1,12 +1,9 @@
 package controller
 
 import (
-	"encoding/json"
 	"f1/backend"
 	initTemplate "f1/temps"
-	"fmt"
 	"net/http"
-	"os"
 )
 
 var page = 1
@@ -22,6 +19,8 @@ var filtre bool
 var toSendPilotes []backend.Pilote             // liste des pilotes que je vais envoyer
 var toSendCircuits []backend.Circuit           // liste des circuits que je vais envoyer
 var toSendConstructeurs []backend.Constructeur // liste des circuits que je vais envoyer
+
+var toSendFavoris backend.Favoris
 
 func InitPilotes(w http.ResponseWriter, r *http.Request) { // Requete opti
 	page = 1
@@ -212,134 +211,6 @@ func DisplayConstructeursSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AddCircuitToFavoris(w http.ResponseWriter, r *http.Request) {
-	var circuitToAdd backend.Circuit
-	toAdd := r.URL.Query().Get("idcircuit")
-
-	for _, i := range circuits {
-		if i.IDCircuit == toAdd {
-			circuitToAdd = i
-			break
-		}
-	}
-
-	fichier, err := os.OpenFile("fav_circuits.json", os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
-		return
-	}
-	defer fichier.Close()
-
-	var favoris []backend.Circuit
-
-	if err := json.NewDecoder(fichier).Decode(&favoris); err != nil && err.Error() != "EOF" {
-		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
-		return
-	}
-	circuitToAdd = TexteCircuit(circuitToAdd)
-	favoris = append(favoris, circuitToAdd)
-
-	updatedJSON, err := json.MarshalIndent(favoris, "", "  ")
-	if err != nil {
-		fmt.Println("il y a une erreur", err)
-		return
-	}
-
-	err = os.WriteFile("fav_circuits.json", updatedJSON, 0644)
-	if err != nil {
-		fmt.Println("il y a une erreur", err)
-		return
-	}
-
-	http.Redirect(w, r, "/circuits", http.StatusSeeOther)
-}
-
-func AddPiloteToFavoris(w http.ResponseWriter, r *http.Request) {
-	var piloteToAdd backend.Pilote
-	toAdd := r.URL.Query().Get("idpilote")
-
-	for _, i := range pilotes {
-		if i.DriverID == toAdd {
-			piloteToAdd = i
-			break
-		}
-	}
-
-	fichier, err := os.OpenFile("fav_pilotes.json", os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
-		return
-	}
-	defer fichier.Close()
-
-	var favoris []backend.Pilote
-
-	if err := json.NewDecoder(fichier).Decode(&favoris); err != nil && err.Error() != "EOF" {
-		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
-		return
-	}
-	piloteToAdd = TextePilote(piloteToAdd)
-	favoris = append(favoris, piloteToAdd)
-
-	updatedJSON, err := json.MarshalIndent(favoris, "", "  ")
-	if err != nil {
-		fmt.Println("Il y a une erreur", err)
-		return
-	}
-
-	err = os.WriteFile("fav_pilotes.json", updatedJSON, 0644)
-	if err != nil {
-		fmt.Println("Il y a une erreur", err)
-		return
-	}
-
-	http.Redirect(w, r, "/pilotes", http.StatusSeeOther)
-}
-
-func AddConstructeurToFavoris(w http.ResponseWriter, r *http.Request) {
-	var constructeurToAdd backend.Constructeur
-	toAdd := r.URL.Query().Get("idconstructeur")
-	fmt.Println(toAdd)
-	for _, i := range constructeurs {
-		fmt.Println(i.ConstructorId)
-		if i.ConstructorId == toAdd {
-
-			constructeurToAdd = i
-			break
-		}
-	}
-
-	fichier, err := os.OpenFile("fav_constructeurs.json", os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
-		return
-	}
-	defer fichier.Close()
-
-	var favoris []backend.Constructeur
-
-	if err := json.NewDecoder(fichier).Decode(&favoris); err != nil && err.Error() != "EOF" {
-		fmt.Println("Erreur lors de la lecture du fichier JSON :", err)
-		return
-	}
-	constructeurToAdd = TexteConstructeur(constructeurToAdd)
-	favoris = append(favoris, constructeurToAdd)
-
-	updatedJSON, err := json.MarshalIndent(favoris, "", "  ")
-	if err != nil {
-		fmt.Println("il y a une erreur", err)
-		return
-	}
-
-	err = os.WriteFile("fav_constructeurs.json", updatedJSON, 0644)
-	if err != nil {
-		fmt.Println("il y a une erreur", err)
-		return
-	}
-
-	http.Redirect(w, r, "/constructeurs", http.StatusSeeOther)
-}
-
 func DisplayDetailPilote(w http.ResponseWriter, r *http.Request) {
 	var PiloteDetail backend.Pilote
 	toAdd := r.URL.Query().Get("idpilote")
@@ -389,4 +260,17 @@ func BackToPilotes(w http.ResponseWriter, r *http.Request) {
 
 func BackToConstructeurs(w http.ResponseWriter, r *http.Request) {
 	initTemplate.Temp.ExecuteTemplate(w, "constructeurs", toSendConstructeurs)
+}
+
+func DisplayFavoris(w http.ResponseWriter, r *http.Request) {
+	if toSendFavoris.FavCircuits == nil {
+		toSendFavoris.CircuitEmpty = true
+	}
+	if toSendFavoris.FavPilotes == nil {
+		toSendFavoris.PiloteEmpty = true
+	}
+	if toSendFavoris.FavConstructeurs == nil {
+		toSendFavoris.ConstructeurEmpty = true
+	}
+	initTemplate.Temp.ExecuteTemplate(w, "favoris", toSendFavoris)
 }

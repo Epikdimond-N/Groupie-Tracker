@@ -401,50 +401,6 @@ label input:checked ~ .img-unchecked {
   height: auto;
 }
 
-.num-flag-nom {
-  width: 100%;
-  height: 30%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.num-flag {
-  width: 15%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.num-flag img {
-  width: 80%;
-  height: auto;
-}
-
-.num-flag-nom span {
-  background-color: var(--off-white);
-  height: 3%;
-  width: 10%;
-  transform: rotate(90deg);
-}
-
-.constructeur {
-  position: relative;
-  width: 100%;
-  height: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.constructeur img {
-  height: 100%;
-  width: auto;
-  position: absolute;
-  z-index: 1;
-}
-
 .favoris {
   height: 100%;
   width: 90%;

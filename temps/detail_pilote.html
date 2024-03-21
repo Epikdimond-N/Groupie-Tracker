@@ -73,12 +73,25 @@
               <p>{{.Texte}}</p>
             </div>
             <div class="fav">
+              {{if .InFav}}
+              <form
+                action="/remove/pilote_of_favoris?idpilote={{.DriverID}}"
+                method="post"
+              >
+                <button type="submit" class="remove-button">
+                  Enlever {{.Name}} des favoris
+                </button>
+              </form>
+              {{else}}
               <form
                 action="/add/pilote_to_favoris?idpilote={{.DriverID}}"
                 method="post"
               >
-                <button type="submit">Ajouter {{.Name}} aux favoris</button>
+                <button type="submit" class="add-button">
+                  Ajouter {{.Name}} aux favoris
+                </button>
               </form>
+              {{end}}
             </div>
           </div>
         </div>

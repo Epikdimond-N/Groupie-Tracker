@@ -201,6 +201,7 @@ type Pilote struct {
 	MaxPage       int
 	Saison        []int
 	Texte         string
+	InFav         bool
 }
 
 type Circuit struct {
@@ -213,6 +214,7 @@ type Circuit struct {
 	MaxPage   int
 	Seasons   []string
 	Texte     string
+	InFav     bool
 }
 
 type Constructeur struct {
@@ -224,6 +226,7 @@ type Constructeur struct {
 	Nationality   string
 	Saisons       []int
 	Texte         string
+	InFav         bool
 }
 
 type JsonCircuit struct {
@@ -239,4 +242,12 @@ type JsonPilote struct {
 type JsonConstructeur struct {
 	ConstructorId string `json:"id"`
 	Texte         string `json:"texte"`
+}
+type Favoris struct {
+	FavPilotes        []Pilote
+	FavConstructeurs  []Constructeur
+	FavCircuits       []Circuit
+	PiloteEmpty       bool
+	CircuitEmpty      bool
+	ConstructeurEmpty bool
 }

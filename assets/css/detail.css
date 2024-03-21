@@ -238,12 +238,22 @@ header {
   width: fit-content;
 }
 
-.fav form button {
+.add-button {
   color: var(--off-white);
   padding-left: 30px;
   padding-right: 30px;
   width: 100%;
   height: 30%;
   background-color: var(--light2);
+  border-radius: 50px;
+}
+
+.remove-button {
+  color: var(--off-white);
+  padding-left: 30px;
+  padding-right: 30px;
+  width: 100%;
+  height: 30%;
+  background-color: #ff4848;
   border-radius: 50px;
 }

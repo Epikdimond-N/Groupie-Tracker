@@ -52,6 +52,12 @@ func InitServe() {
 	http.HandleFunc("/add/circuit_to_favoris", controller.AddCircuitToFavoris)
 	http.HandleFunc("/add/constructeur_to_favoris", controller.AddConstructeurToFavoris)
 
+	http.HandleFunc("/remove/pilote_of_favoris", controller.RemovePiloteOfFavoris)
+	http.HandleFunc("/remove/circuit_of_favoris", controller.RemoveCircuitOfFavoris)
+	http.HandleFunc("/remove/constructeur_of_favoris", controller.RemoveConstructorOfFavoris)
+
+	http.HandleFunc("/favoris", controller.DisplayFavoris)
+
 	rootDoc, _ := os.Getwd()
 	fileserver := http.FileServer(http.Dir(rootDoc + "/assets"))
 	http.Handle("/static/", http.StripPrefix("/static/", fileserver))
